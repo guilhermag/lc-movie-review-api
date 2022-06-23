@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int       @id @default(autoincrement())
+  email    String    @unique
+  name     String?
+  password String
+  score    Int
+  role     Role      @default(READER)
+  comments Comment[]
+  profile  Profile?
+
+  @@map("users")
+}
+
+model Profile {
+  id     Int    @id @default(autoincrement())
+  bio    String
+  user   User   @relation(fields: [userId], references: [id])
+  userId Int    @unique
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int
+  movie     Movie    @relation(references: [id], fields: [movieId])
+  likes     Int
+  dislikes  Int
+  movieId   Int
+
+  @@map("comments")
+}
+
+model Movie {
+  id       Int       @id @default(autoincrement())
+  name     String
+  comments Comment[]
+
+  @@map("movies")
+}
+
+enum Role {
+  READER
+  BASIC
+  ADVANCED
+  MODERATOR
+}
