@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
-// import { UpdateUserDto } from './dto/update-user.dto';
 import { HttpService } from '@nestjs/axios';
 import { AxiosResponse } from 'axios';
+
+import { UserDto } from './dto';
 
 @Injectable()
 export class UserService {
   constructor(private readonly httpService: HttpService) {}
 
-  async authUser(): Promise<AxiosResponse> {
+  async authenticate(): Promise<AxiosResponse> {
     const resposta = await this.httpService.axiosRef
       .get('http://localhost:3000/auth/login')
       .then((res) => res.data);
@@ -16,23 +17,7 @@ export class UserService {
     return resposta;
   }
 
-  create() {
+  create(dto: UserDto) {
     return 'This action adds a new user';
-  }
-
-  findAll() {
-    return `This action returns all user`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
-
-  update() {
-    return `This action updates a  user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
   }
 }
