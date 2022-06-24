@@ -17,16 +17,8 @@ model User {
   role     Role      @default(READER)
   reviews  Review[]
   comments Comment[]
-  profile  Profile?
 
   @@map("users")
-}
-
-model Profile {
-  id     Int    @id @default(autoincrement())
-  bio    String
-  user   User   @relation(fields: [userId], references: [id])
-  userId Int    @unique
 }
 
 model Comment {
