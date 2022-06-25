@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  dev-shadow-db:
+  dev-db:
     image: 'postgres:latest'
     ports:
       - 5432:5432

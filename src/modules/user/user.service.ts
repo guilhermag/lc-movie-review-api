@@ -8,12 +8,14 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { UserDto } from './dto';
 import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly httpService: HttpService,
     private prisma: PrismaService,
+    private jwt: JwtService,
   ) {}
 
   async authenticate(): Promise<AxiosResponse> {

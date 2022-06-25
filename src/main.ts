@@ -8,10 +8,8 @@ async function bootstrap() {
   app.enableCors();
 
   const config = new DocumentBuilder()
-    .setTitle('Itaú Devs - API UsersReview')
-    .setDescription(
-      'Parte 1 do Coding Challenge, feito por Guilherme de Araujo Gabriel ',
-    )
+    .setTitle('MovieForumAPI - MovieReview')
+    .setDescription('Movie Forum API done by Guilherme de Araujo Gabriel')
     .setVersion('1.0')
     .addTag('review')
     .build();
