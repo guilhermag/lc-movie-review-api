@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Param } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CommentDto } from './dto';
 import { JwtGuard } from '../auth/guard';
@@ -9,18 +9,18 @@ export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
   @Get('')
-  getAllReviews() {
+  getAllComments() {
     return this.commentService.findAll();
   }
 
-  @Get('')
-  getAllReviewsByUser() {
-    return this.commentService.findByUser();
+  @Get('user/:id')
+  getAllCommentsByUser(@Param() params: { id: string }) {
+    return this.commentService.findByUser(params.id);
   }
 
-  @Get('')
-  getReviewById() {
-    return this.commentService.findById();
+  @Get(':id')
+  getCommentById(@Param() params: { id: string }) {
+    return this.commentService.findById(params.id);
   }
 
   @Post('')

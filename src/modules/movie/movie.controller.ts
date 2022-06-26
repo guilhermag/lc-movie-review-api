@@ -1,21 +1,12 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  UseGuards,
-  Param,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, UseGuards, Param, Query } from '@nestjs/common';
 import { MovieService } from './movie.service';
-import { MovieDto } from './dto';
 import { JwtGuard } from '../auth/guard';
 @UseGuards(JwtGuard)
 @Controller('movies')
 export class MovieController {
   constructor(private readonly movieService: MovieService) {}
 
-  @Get('id?')
+  @Get('id-imdb?')
   getById(@Query('id') id: string): string {
     return `Movie selected by id: ${id}`;
   }
@@ -26,27 +17,22 @@ export class MovieController {
   }
 
   @Get('')
-  getAllMovies() {
+  getAllMoviesInBase() {
     return this.movieService.findAll();
   }
 
-  @Get('')
-  getAllCommentsByMovie() {
-    return this.movieService.findAllComments();
+  @Get(':id/comments')
+  getAllCommentsByMovie(@Param() params: { id: string }) {
+    return this.movieService.findAllComments(params.id);
   }
 
-  @Get('')
-  getAllReviewsByMovie() {
-    return this.movieService.findAllReviews();
+  @Get(':id/reviews')
+  getAllReviewsByMovie(@Param() params: { id: string }) {
+    return this.movieService.findAllReviews(params.id);
   }
 
-  @Get('')
-  getMovieById() {
-    return this.movieService.findById();
-  }
-
-  @Post('create')
-  create(@Body() dto: MovieDto) {
-    return this.movieService.create(dto);
+  @Get(':id')
+  getMovieById(@Param() params: { id: string }) {
+    return this.movieService.findById(params.id);
   }
 }

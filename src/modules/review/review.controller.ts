@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Param } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { ReviewDto } from './dto';
 import { JwtGuard } from '../auth/guard';
@@ -13,14 +13,14 @@ export class ReviewController {
     return this.reviewService.findAll();
   }
 
-  @Get('')
-  getAllReviewsByUser() {
-    return this.reviewService.findByUser();
+  @Get('user/:id')
+  getAllCommentsByUser(@Param() params: { id: string }) {
+    return this.reviewService.findByUser(params.id);
   }
 
-  @Get('')
-  getReviewById() {
-    return this.reviewService.findById();
+  @Get(':id')
+  getCommentById(@Param() params: { id: string }) {
+    return this.reviewService.findById(params.id);
   }
 
   @Post('')

@@ -13,19 +13,19 @@ export class MovieService {
     return 'This action get all the movies';
   }
 
-  findAllComments() {
-    return 'This action get all the movies';
+  findAllComments(movieId: string) {
+    return `This action get all the comments of the movie with id ${movieId}`;
   }
 
-  findAllReviews() {
-    return 'This action get all the movies';
+  findAllReviews(movieId: string) {
+    return `This action get all the reviews of the movie with id ${movieId}`;
   }
 
-  findById() {
-    return 'This action get a review by its id';
+  findById(movieId: string) {
+    return `This action get all the informations of the movie with id ${movieId}`;
   }
 
-  create(dto: MovieDto) {
-    return 'This action creates a new movie from a review';
-  }
+  // create(dto: MovieDto) {
+  //   return 'This action creates a new movie from a review';
+  // }
 }

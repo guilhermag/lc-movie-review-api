@@ -13,12 +13,12 @@ export class ReviewService {
     return 'This action get all the reviews';
   }
 
-  findByUser() {
-    return 'This action get all the reviews from a user';
+  findByUser(userId: string) {
+    return `This action get all the reviews of the user with id ${userId}`;
   }
 
-  findById() {
-    return 'This action get a review by its id';
+  findById(reviewId: string) {
+    return `This action get all the informations of the review with id ${reviewId}`;
   }
 
   create(dto: ReviewDto) {

@@ -13,12 +13,12 @@ export class CommentService {
     return 'This action get all the comments';
   }
 
-  findByUser() {
-    return 'This action get all the comments from a user';
+  findByUser(userId: string) {
+    return `This action get all the comments of the user with id ${userId}`;
   }
 
-  findById() {
-    return 'This action get a comment by its id';
+  findById(commentId: string) {
+    return `This action get all the informations of the comment with id ${commentId}`;
   }
 
   create(dto: CommentDto) {
