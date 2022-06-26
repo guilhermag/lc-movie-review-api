@@ -7,13 +7,13 @@ export class MovieController {
   constructor(private readonly movieService: MovieService) {}
 
   @Get('id-imdb?')
-  getById(@Query('id') id: string): string {
-    return `Movie selected by id: ${id}`;
+  getById(@Query('id') id: string) {
+    return this.movieService.findByMovieIdIMDB(id);
   }
 
   @Get('title?')
-  getByTitle(@Query('title') title: string): string {
-    return `Movie selected by title: ${title}`;
+  getByTitle(@Query('title') title: string) {
+    return this.movieService.findByMovieTitle(title);
   }
 
   @Get('')

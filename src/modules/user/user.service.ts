@@ -22,13 +22,12 @@ export class UserService {
 
   async login(dto: UserDto): Promise<AxiosResponse> {
     try {
-      const response = await this.httpService.axiosRef
+      return await this.httpService.axiosRef
         .post('http://localhost:3000/auth/user', {
           email: dto.email,
           password: dto.password,
         })
         .then((res) => res.data);
-      return response;
     } catch (error) {
       const errorReqStatus: number = error.toJSON().status;
 
