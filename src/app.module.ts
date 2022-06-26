@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { JwtStrategy } from './modules/auth/strategy';
 
 import { CommentModule } from './modules/comment/comment.module';
 import { MovieModule } from './modules/movie/movie.module';
@@ -17,5 +18,6 @@ import { PrismaModule } from './prisma/prisma.module';
     CommentModule,
     PrismaModule,
   ],
+  providers: [JwtStrategy],
 })
 export class AppModule {}
