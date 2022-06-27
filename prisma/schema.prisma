@@ -8,14 +8,15 @@ datasource db {
 }
 
 model User {
-  id       Int       @id @default(autoincrement())
-  email    String    @unique
-  name     String?
-  password String
-  score    Int
-  role     Role      @default(READER)
-  reviews  Review[]
-  comments Comment[]
+  id             Int       @id @default(autoincrement())
+  email          String    @unique
+  name           String?
+  password       String
+  score          Int
+  role           Role      @default(READER)
+  reviews        Review[]
+  comments       Comment[]
+  cittedComments String[]
 
   @@map("users")
 }
@@ -30,6 +31,7 @@ model Comment {
   likes       Int
   dislikes    Int
   answers     String[]
+  repeated    Boolean  @default(false)
   movieId     Int
 
   @@map("comments")
