@@ -14,6 +14,36 @@ export class MovieService {
     private prisma: PrismaService,
   ) {}
 
+  // Methods relationeds with movies only usedes in Movies modules.
+  async findAll() {
+    return await this.prisma.movie.findMany();
+  }
+
+  async findAllComments(movieId: number) {
+    return await this.prisma.comment.findMany({
+      where: {
+        movieId: movieId,
+      },
+    });
+  }
+
+  async findAllReviews(movieId: number) {
+    return await this.prisma.review.findMany({
+      where: {
+        movieId: movieId,
+      },
+    });
+  }
+
+  async findById(movieId: number) {
+    return await this.prisma.movie.findUnique({
+      where: {
+        id: movieId,
+      },
+    });
+  }
+
+  // Methods relationeds with movies that are used in others modules.
   async saveMovie(dto: MovieDto): Promise<number> {
     const movie = await this.prisma.movie.create({
       data: {
@@ -87,22 +117,6 @@ export class MovieService {
       return movie.id;
     }
     return movie.id;
-  }
-
-  async findAll() {
-    return await this.prisma.movie.findMany();
-  }
-
-  findAllComments(movieId: string) {
-    return `This action get all the comments of the movie with id ${movieId}`;
-  }
-
-  findAllReviews(movieId: string) {
-    return `This action get all the reviews of the movie with id ${movieId}`;
-  }
-
-  findById(movieId: string) {
-    return `This action get all the informations of the movie with id ${movieId}`;
   }
 
   async findByIdIMDB(movieIdIMDB: string) {

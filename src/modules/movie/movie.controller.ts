@@ -1,4 +1,10 @@
-import { Controller, Get, UseGuards, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  UseGuards,
+  Param,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { MovieService } from './movie.service';
 import { JwtGuard } from '../auth/guard';
 
@@ -12,18 +18,18 @@ export class MovieController {
     return this.movieService.findAll();
   }
 
-  @Get('comments')
-  getAllCommentsByMovie(@Param() params: { id: string }) {
-    return this.movieService.findAllComments(params.id);
+  @Get('comments/:id')
+  getAllCommentsByMovie(@Param('id', ParseIntPipe) movieId: number) {
+    return this.movieService.findAllComments(movieId);
   }
 
-  @Get('reviews')
-  getAllReviewsByMovie(@Param() params: { id: string }) {
-    return this.movieService.findAllReviews(params.id);
+  @Get('reviews/:id')
+  getAllReviewsByMovie(@Param('id', ParseIntPipe) movieId: number) {
+    return this.movieService.findAllReviews(movieId);
   }
 
   @Get(':id')
-  getMovieById(@Param() params: { id: string }) {
-    return this.movieService.findById(params.id);
+  getMovieById(@Param('id', ParseIntPipe) movieId: number) {
+    return this.movieService.findById(movieId);
   }
 }

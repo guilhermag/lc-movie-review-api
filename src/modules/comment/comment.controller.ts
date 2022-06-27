@@ -41,8 +41,13 @@ export class CommentController {
     return this.commentService.findAll();
   }
 
-  @Get('user')
-  getAllCommentsByUser(@GetUser('id') userId: number) {
+  @Get('logged-user')
+  getAllCommentsOfLoggedUser(@GetUser('id') userId: number) {
+    return this.commentService.findByUser(userId);
+  }
+
+  @Get('user/:id')
+  getAllCommentsByUser(@Param('id', ParseIntPipe) userId: number) {
     return this.commentService.findByUser(userId);
   }
 

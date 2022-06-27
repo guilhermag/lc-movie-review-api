@@ -6,6 +6,7 @@ import {
   UseGuards,
   Param,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { ReviewDto } from './dto';
@@ -17,13 +18,36 @@ import { GetUser } from '../auth/decorator';
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
+  @Post('movie/id-imdb?')
+  createReviewByMovieId(
+    @Query('id') idIMDB: string,
+    @GetUser('id') userId: number,
+    @Body() dto: ReviewDto,
+  ) {
+    return this.reviewService.createByIdIMDB(idIMDB, userId, dto);
+  }
+
+  @Post('movie/title?')
+  createReviewByMovieTitle(
+    @Query('title') title: string,
+    @GetUser('id') userId: number,
+    @Body() dto: ReviewDto,
+  ) {
+    return this.reviewService.createByTitle(title, userId, dto);
+  }
+
   @Get('')
   getAllReviews() {
     return this.reviewService.findAll();
   }
 
-  @Get('user')
-  getAllReviewsByUser(@GetUser('id') userId: number) {
+  @Get('logged-user')
+  getAllReviewsOfLoggedUser(@GetUser('id') userId: number) {
+    return this.reviewService.findByUser(userId);
+  }
+
+  @Get('user/:id')
+  getAllReviewsByUser(@Param('id', ParseIntPipe) userId: number) {
     return this.reviewService.findByUser(userId);
   }
 
@@ -34,9 +58,4 @@ export class ReviewController {
   ) {
     return this.reviewService.findById(userId, reviewId);
   }
-
-  // @Post('')
-  // create(@GetUser('id') userId: number, @Body() dto: ReviewDto) {
-  //   return this.reviewService.create(userId, dto);
-  // }
 }
