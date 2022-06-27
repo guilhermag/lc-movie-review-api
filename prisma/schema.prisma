@@ -29,6 +29,7 @@ model Comment {
   description String
   likes       Int
   dislikes    Int
+  answers     String[]
   movieId     Int
 
   @@map("comments")

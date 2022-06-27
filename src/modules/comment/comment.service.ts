@@ -3,7 +3,13 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { MovieService } from '../movie/movie.service';
 import { UserService } from '../user/user.service';
 
-import { CommentDto, Role } from './dto';
+import {
+  CommentDto,
+  CommentAnswerDto,
+  Role,
+  CommentVoteDto,
+  Vote,
+} from './dto';
 
 @Injectable()
 export class CommentService {
@@ -78,6 +84,100 @@ export class CommentService {
     return await this.prisma.comment.findMany({
       where: {
         authorId: userId,
+        id: commentId,
+      },
+    });
+  }
+
+  async answerComment(
+    userId: number,
+    commentId: number,
+    dto: CommentAnswerDto,
+  ) {
+    const authorRole: Role = await this.userService.getUserRole(userId);
+    if (authorRole === 'READER') {
+      throw new ForbiddenException('Readers can not write comments!');
+    }
+    const userEmail = (await this.userService.findById(userId)).email;
+    const answerModel = `Message: ${dto.answerComment}, by: ${userEmail}`;
+    const allAnswers: string[] = await this.getAllAnswersById(commentId);
+    const actualComment = await this.prisma.comment.update({
+      where: {
+        id: commentId,
+      },
+      data: {
+        answers: [...allAnswers, answerModel],
+      },
+    });
+    const commentAuthorId = userId;
+
+    await this.userService.updateUserScore(commentAuthorId);
+    await this.userService.updateUserRole(commentAuthorId);
+    return actualComment;
+  }
+
+  async getAllAnswersById(commentId: number): Promise<string[]> {
+    const comment = await this.prisma.comment.findUnique({
+      where: {
+        id: commentId,
+      },
+    });
+    return comment.answers;
+  }
+
+  async likeComment(commentId: number) {
+    return await this.prisma.comment.update({
+      where: {
+        id: commentId,
+      },
+      data: {
+        likes: {
+          increment: 1,
+        },
+      },
+    });
+  }
+
+  async dislikeComment(commentId: number) {
+    return await this.prisma.comment.update({
+      where: {
+        id: commentId,
+      },
+      data: {
+        dislikes: {
+          increment: 1,
+        },
+      },
+    });
+  }
+
+  async likeOrDislikeComment(
+    commentId: number,
+    userEvaluatorId: number,
+    commentAvaliation: CommentVoteDto,
+  ) {
+    const authorRole: Role = await this.userService.getUserRole(
+      userEvaluatorId,
+    );
+    if (authorRole === 'READER' || authorRole === 'BASIC') {
+      throw new ForbiddenException(
+        'Readers and Basic users can not like or dislike comments!',
+      );
+    }
+
+    const userVote: Vote = commentAvaliation.vote;
+
+    if (userVote === 'LIKE') return await this.likeComment(commentId);
+    if (userVote === 'DISLIKE') return await this.dislikeComment(commentId);
+  }
+
+  async deleteById(userId: number, commentId: number) {
+    const authorRole: Role = await this.userService.getUserRole(userId);
+    if (authorRole !== 'MODERATOR') {
+      throw new ForbiddenException('Only moderators can delete a comment!');
+    }
+    return await this.prisma.comment.delete({
+      where: {
         id: commentId,
       },
     });

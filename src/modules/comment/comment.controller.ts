@@ -7,9 +7,11 @@ import {
   Param,
   Query,
   ParseIntPipe,
+  Patch,
+  Delete,
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
-import { CommentDto } from './dto';
+import { CommentDto, CommentAnswerDto, CommentVoteDto } from './dto';
 import { JwtGuard } from '../auth/guard';
 import { GetUser } from '../auth/decorator';
 
@@ -57,5 +59,35 @@ export class CommentController {
     @Param('id', ParseIntPipe) commentId: number,
   ) {
     return this.commentService.findById(userId, commentId);
+  }
+
+  @Post(':id')
+  answerCommentById(
+    @GetUser('id') userId: number,
+    @Param('id', ParseIntPipe) commentId: number,
+    @Body() dto: CommentAnswerDto,
+  ) {
+    return this.commentService.answerComment(userId, commentId, dto);
+  }
+
+  @Patch('vote/:id')
+  likeOrDislikeComment(
+    @GetUser('id') userEvaluatorId: number,
+    @Param('id', ParseIntPipe) commentId: number,
+    @Body() dto: CommentVoteDto,
+  ) {
+    return this.commentService.likeOrDislikeComment(
+      commentId,
+      userEvaluatorId,
+      dto,
+    );
+  }
+
+  @Delete(':id')
+  deleteCommentById(
+    @GetUser('id') userId: number,
+    @Param('id', ParseIntPipe) commentId: number,
+  ) {
+    return this.commentService.deleteById(userId, commentId);
   }
 }
