@@ -65,6 +65,26 @@ export class UserService {
     }
   }
 
+  async signToken(
+    userId: number,
+    email: string,
+  ): Promise<{ access_token: string }> {
+    const payload = {
+      sub: userId,
+      email,
+    };
+    const secret = this.config.get('JWT_SECRET');
+
+    const token = await this.jwt.signAsync(payload, {
+      expiresIn: '30m',
+      secret: secret,
+    });
+
+    return {
+      access_token: token,
+    };
+  }
+
   async findById(userId: number) {
     return await this.prisma.user.findUnique({
       where: {
@@ -135,23 +155,12 @@ export class UserService {
     }
   }
 
-  async signToken(
-    userId: number,
-    email: string,
-  ): Promise<{ access_token: string }> {
-    const payload = {
-      sub: userId,
-      email,
-    };
-    const secret = this.config.get('JWT_SECRET');
-
-    const token = await this.jwt.signAsync(payload, {
-      expiresIn: '30m',
-      secret: secret,
+  async getAllQuotesById(userId: number): Promise<number[]> {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
     });
-
-    return {
-      access_token: token,
-    };
+    return user.quotedCommentsId;
   }
 }

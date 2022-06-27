@@ -8,15 +8,15 @@ datasource db {
 }
 
 model User {
-  id             Int       @id @default(autoincrement())
-  email          String    @unique
-  name           String?
-  password       String
-  score          Int
-  role           Role      @default(READER)
-  reviews        Review[]
-  comments       Comment[]
-  cittedComments String[]
+  id               Int       @id @default(autoincrement())
+  email            String    @unique
+  name             String?
+  password         String
+  score            Int
+  role             Role      @default(READER)
+  reviews          Review[]
+  comments         Comment[]
+  quotedCommentsId Int[]
 
   @@map("users")
 }

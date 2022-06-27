@@ -101,7 +101,7 @@ export class CommentService {
     const userEmail = (await this.userService.findById(userId)).email;
     const answerModel = `Message: ${dto.answerComment}, by: ${userEmail}`;
     const allAnswers: string[] = await this.getAllAnswersById(commentId);
-    const actualComment = await this.prisma.comment.update({
+    const atualComment = await this.prisma.comment.update({
       where: {
         id: commentId,
       },
@@ -113,7 +113,7 @@ export class CommentService {
 
     await this.userService.updateUserScore(commentAuthorId);
     await this.userService.updateUserRole(commentAuthorId);
-    return actualComment;
+    return atualComment;
   }
 
   async getAllAnswersById(commentId: number): Promise<string[]> {
@@ -179,6 +179,26 @@ export class CommentService {
     return await this.prisma.comment.delete({
       where: {
         id: commentId,
+      },
+    });
+  }
+
+  async quoteComment(userId: number, commentId: number) {
+    const userRole: Role = await this.userService.getUserRole(userId);
+    if (userRole !== 'READER' && userRole !== 'BASIC') {
+      throw new ForbiddenException(
+        'Only Advanced and Moderatos users can cite a comment!',
+      );
+    }
+
+    const allQuotes: number[] = await this.userService.getAllQuotesById(userId);
+
+    return await this.prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        quotedCommentsId: [...allQuotes, commentId],
       },
     });
   }

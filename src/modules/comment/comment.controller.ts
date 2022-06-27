@@ -90,4 +90,12 @@ export class CommentController {
   ) {
     return this.commentService.deleteById(userId, commentId);
   }
+
+  @Post('quote/:id')
+  quoteCommentById(
+    @GetUser('id') userId: number,
+    @Param('id', ParseIntPipe) commentId: number,
+  ) {
+    return this.commentService.quoteComment(userId, commentId);
+  }
 }
