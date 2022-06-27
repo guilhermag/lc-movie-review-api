@@ -11,7 +11,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
-import { CommentDto, CommentAnswerDto, CommentVoteDto } from './dto';
+import { CommentDto, CommentAnswerDto } from './dto';
 import { JwtGuard } from '../auth/guard';
 import { GetUser } from '../auth/decorator';
 
@@ -70,17 +70,20 @@ export class CommentController {
     return this.commentService.answerComment(userId, commentId, dto);
   }
 
-  @Patch('vote/:id')
-  likeOrDislikeComment(
+  @Patch('like/:id')
+  likeCommentById(
     @GetUser('id') userEvaluatorId: number,
     @Param('id', ParseIntPipe) commentId: number,
-    @Body() dto: CommentVoteDto,
   ) {
-    return this.commentService.likeOrDislikeComment(
-      commentId,
-      userEvaluatorId,
-      dto,
-    );
+    return this.commentService.likeCommentById(commentId, userEvaluatorId);
+  }
+
+  @Patch('dislike/:id')
+  dislikeCommentById(
+    @GetUser('id') userEvaluatorId: number,
+    @Param('id', ParseIntPipe) commentId: number,
+  ) {
+    return this.commentService.dislikeCommentById(commentId, userEvaluatorId);
   }
 
   @Delete(':id')
@@ -93,6 +96,22 @@ export class CommentController {
 
   @Post('quote/:id')
   quoteCommentById(
+    @GetUser('id') userId: number,
+    @Param('id', ParseIntPipe) commentId: number,
+  ) {
+    return this.commentService.quoteComment(userId, commentId);
+  }
+
+  @Post('repeated/:id')
+  markCommentAsReapeated(
+    @GetUser('id') userId: number,
+    @Param('id', ParseIntPipe) commentId: number,
+  ) {
+    return this.commentService.quoteComment(userId, commentId);
+  }
+
+  @Post('not/repeated/:id')
+  unmarkCommentAsReapeated(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) commentId: number,
   ) {

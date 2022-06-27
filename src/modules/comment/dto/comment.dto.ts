@@ -6,3 +6,5 @@ export class CommentDto {
 }
 
 export type Role = 'READER' | 'BASIC' | 'ADVANCED' | 'MODERATOR';
+
+export type Vote = 'LIKE' | 'DISLIKE';
