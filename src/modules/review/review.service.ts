@@ -1,27 +1,40 @@
 import { Injectable } from '@nestjs/common';
-
-import { HttpService } from '@nestjs/axios';
-import { AxiosResponse } from 'axios';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 import { ReviewDto } from './dto';
 
 @Injectable()
 export class ReviewService {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  findAll() {
-    return 'This action get all the reviews';
+  async findAll() {
+    return await this.prisma.review.findMany();
   }
 
-  findByUser(userId: string) {
-    return `This action get all the reviews of the user with id ${userId}`;
+  async findByUser(userId: number) {
+    return await this.prisma.review.findMany({
+      where: {
+        authorId: userId,
+      },
+    });
   }
 
-  findById(reviewId: string) {
-    return `This action get all the informations of the review with id ${reviewId}`;
+  async findById(userId: number, reviewId: number) {
+    return await this.prisma.review.findUnique({
+      where: {
+        authorId: userId,
+        id: reviewId,
+      },
+    });
   }
 
-  create(dto: ReviewDto) {
-    return 'This action adds a new review';
+  async create(userId: number, movieId: number, dto: ReviewDto) {
+    return await this.prisma.review.create({
+      data: {
+        authorId: userId,
+        movieScore: dto.movieScore,
+        movieId: movieId,
+      },
+    });
   }
 }

@@ -11,3 +11,5 @@ export class UserDto {
   @IsString()
   password: string;
 }
+
+export type Role = 'READER' | 'BASIC' | 'ADVANCED' | 'MODERATOR';

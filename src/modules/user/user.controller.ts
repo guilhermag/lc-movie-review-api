@@ -17,15 +17,15 @@ import { User } from '@prisma/client';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Post('create')
+  create(@Body() dto: UserDto) {
+    return this.userService.create(dto);
+  }
+
   @HttpCode(HttpStatus.OK)
   @Post('login')
   login(@Body() dto: UserDto) {
     return this.userService.login(dto);
-  }
-
-  @Post('create')
-  create(@Body() dto: UserDto) {
-    return this.userService.create(dto);
   }
 
   @UseGuards(JwtGuard)
