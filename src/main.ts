@@ -12,9 +12,20 @@ async function bootstrap() {
     .setDescription('Movie Forum API done by Guilherme de Araujo Gabriel')
     .setVersion('1.0')
     .addTag('review')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Enter JWT token',
+        in: 'header',
+      },
+      'JWT-auth',
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api-docs', app, document);
 
   app.useGlobalPipes(new ValidationPipe({}));
   await app.listen(3333);

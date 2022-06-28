@@ -14,13 +14,17 @@ import { CommentService } from './comment.service';
 import { CommentDto, CommentAnswerDto } from './dto';
 import { JwtGuard } from '../auth/guard';
 import { GetUser } from '../auth/decorator';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @UseGuards(JwtGuard)
+@ApiBearerAuth('JWT-auth')
 @Controller('comment')
+@ApiTags('Comment')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
   @Post('movie/id-imdb?')
+  @ApiOperation({ summary: 'Creates a comment using the movie imdb id' })
   createCommentByMovieId(
     @Query('id') idIMDB: string,
     @GetUser('id') userId: number,
@@ -30,6 +34,7 @@ export class CommentController {
   }
 
   @Post('movie/title?')
+  @ApiOperation({ summary: 'Creates a comment using the movie title' })
   createCommentByMovieTitle(
     @Query('title') title: string,
     @GetUser('id') userId: number,
@@ -39,21 +44,25 @@ export class CommentController {
   }
 
   @Get('')
+  @ApiOperation({ summary: 'Get all the comments' })
   getAllComments() {
     return this.commentService.findAll();
   }
 
   @Get('logged-user')
+  @ApiOperation({ summary: 'Get all the comments from the logged user' })
   getAllCommentsOfLoggedUser(@GetUser('id') userId: number) {
     return this.commentService.findByUser(userId);
   }
 
   @Get('user/:id')
+  @ApiOperation({ summary: 'Get all the comments from a user in expecific' })
   getAllCommentsByUser(@Param('id', ParseIntPipe) userId: number) {
     return this.commentService.findByUser(userId);
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get a comment in expecific' })
   getCommentById(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) commentId: number,
@@ -62,6 +71,7 @@ export class CommentController {
   }
 
   @Post(':id')
+  @ApiOperation({ summary: 'Logged user answer a comment' })
   answerCommentById(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) commentId: number,
@@ -71,6 +81,7 @@ export class CommentController {
   }
 
   @Patch('like/:id')
+  @ApiOperation({ summary: 'Logged user likes a comment' })
   likeCommentById(
     @GetUser('id') userEvaluatorId: number,
     @Param('id', ParseIntPipe) commentId: number,
@@ -79,6 +90,7 @@ export class CommentController {
   }
 
   @Patch('dislike/:id')
+  @ApiOperation({ summary: 'Logged user dislikes a comment' })
   dislikeCommentById(
     @GetUser('id') userEvaluatorId: number,
     @Param('id', ParseIntPipe) commentId: number,
@@ -86,15 +98,10 @@ export class CommentController {
     return this.commentService.dislikeCommentById(commentId, userEvaluatorId);
   }
 
-  @Delete(':id')
-  deleteCommentById(
-    @GetUser('id') userId: number,
-    @Param('id', ParseIntPipe) commentId: number,
-  ) {
-    return this.commentService.deleteById(userId, commentId);
-  }
-
   @Post('quote/:id')
+  @ApiOperation({
+    summary: 'Logged user quotes a comment, and add it to his list of quotes',
+  })
   quoteCommentById(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) commentId: number,
@@ -103,18 +110,29 @@ export class CommentController {
   }
 
   @Post('repeated/:id')
-  markCommentAsReapeated(
+  @ApiOperation({ summary: 'Marks a comment as repeated' })
+  commentRepeated(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) commentId: number,
   ) {
-    return this.commentService.quoteComment(userId, commentId);
+    return this.commentService.commentRepeated(userId, commentId);
   }
 
   @Post('not/repeated/:id')
-  unmarkCommentAsReapeated(
+  @ApiOperation({ summary: 'Marks a comment as not repeated' })
+  commentNotRepeated(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) commentId: number,
   ) {
-    return this.commentService.quoteComment(userId, commentId);
+    return this.commentService.commentNotRepeated(userId, commentId);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Deletes a comment' })
+  deleteCommentById(
+    @GetUser('id') userId: number,
+    @Param('id', ParseIntPipe) commentId: number,
+  ) {
+    return this.commentService.deleteById(userId, commentId);
   }
 }

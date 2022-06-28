@@ -144,6 +144,16 @@ export class CommentService {
     });
   }
 
+  async commentRepeated(commentId: number, userId: number) {
+    await this.checkRoleForMod(userId);
+    return await this.markCommentRepeated(commentId);
+  }
+
+  async commentNotRepeated(commentId: number, userId: number) {
+    await this.checkRoleForMod(userId);
+    return await this.unmarkCommentRepeated(commentId);
+  }
+
   private async likeComment(commentId: number) {
     return await this.prisma.comment.update({
       where: {
@@ -166,6 +176,28 @@ export class CommentService {
         dislikes: {
           increment: 1,
         },
+      },
+    });
+  }
+
+  private async markCommentRepeated(commentId: number) {
+    return await this.prisma.comment.update({
+      where: {
+        id: commentId,
+      },
+      data: {
+        repeated: true,
+      },
+    });
+  }
+
+  private async unmarkCommentRepeated(commentId: number) {
+    return await this.prisma.comment.update({
+      where: {
+        id: commentId,
+      },
+      data: {
+        repeated: false,
       },
     });
   }
@@ -198,7 +230,9 @@ export class CommentService {
   private async checkRoleForMod(userId: number) {
     const authorRole: Role = await this.userService.getUserRole(userId);
     if (authorRole !== 'MODERATOR') {
-      throw new ForbiddenException('Only moderators can delete a comment!');
+      throw new ForbiddenException(
+        'Only moderators can delete a comment or mark it as repeated!',
+      );
     }
   }
 }

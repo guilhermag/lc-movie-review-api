@@ -5,7 +5,7 @@ import { AxiosResponse } from 'axios';
 
 import { PrismaService } from '../../prisma/prisma.service';
 
-import { UserDto, Role } from './dto';
+import { CreateUserDto, LoginUserDto, Role } from './dto';
 import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { JwtService } from '@nestjs/jwt';
@@ -20,7 +20,7 @@ export class UserService {
     private jwt: JwtService,
   ) {}
 
-  async login(dto: UserDto): Promise<AxiosResponse> {
+  async login(dto: LoginUserDto): Promise<AxiosResponse> {
     try {
       return await this.httpService.axiosRef
         .post('http://localhost:3000/auth/user', {
@@ -41,7 +41,7 @@ export class UserService {
     }
   }
 
-  async create(dto: UserDto) {
+  async create(dto: CreateUserDto) {
     const hash = await argon.hash(dto.password);
 
     try {
@@ -53,7 +53,8 @@ export class UserService {
           score: 0,
         },
       });
-      return this.signToken(user.id, user.email);
+      delete user.password;
+      return user;
     } catch (error) {
       // trying to save with unique field
       if (error instanceof PrismaClientKnownRequestError) {
@@ -63,26 +64,6 @@ export class UserService {
       }
       throw error;
     }
-  }
-
-  async signToken(
-    userId: number,
-    email: string,
-  ): Promise<{ access_token: string }> {
-    const payload = {
-      sub: userId,
-      email,
-    };
-    const secret = this.config.get('JWT_SECRET');
-
-    const token = await this.jwt.signAsync(payload, {
-      expiresIn: '30m',
-      secret: secret,
-    });
-
-    return {
-      access_token: token,
-    };
   }
 
   async findById(userId: number) {
