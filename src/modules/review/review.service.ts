@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { MovieService } from '../movie/movie.service';
 import { UserService } from '../user/user.service';
@@ -12,6 +16,8 @@ export class ReviewService {
     private readonly movieService: MovieService,
     private readonly userService: UserService,
   ) {}
+
+  // Methods related to the comment controller.
 
   async createByIdIMDB(idIMDB: string, userId: number, dto: ReviewDto) {
     const movieId =
@@ -32,6 +38,7 @@ export class ReviewService {
   }
 
   async createByTitle(movieTitle: string, userId: number, dto: ReviewDto) {
+    this.checkScore(dto.movieScore);
     const movieId = await this.movieService.getMovieIdForCommentOrReviewByTitle(
       movieTitle,
     );
@@ -55,6 +62,7 @@ export class ReviewService {
   }
 
   async findByUser(userId: number) {
+    await this.userService.checkIfUserExist(userId);
     return await this.prisma.review.findMany({
       where: {
         authorId: userId,
@@ -62,12 +70,31 @@ export class ReviewService {
     });
   }
 
-  async findById(userId: number, reviewId: number) {
-    return await this.prisma.review.findMany({
+  async findById(reviewId: number) {
+    await this.checkIfReviewExist(reviewId);
+    return await this.prisma.review.findUnique({
       where: {
-        authorId: userId,
         id: reviewId,
       },
     });
+  }
+
+  // Methods that only are used in the comment service
+
+  private checkScore(reviewScore: number) {
+    if (reviewScore < 0 || reviewScore > 10) {
+      throw new ForbiddenException(
+        'Reviews scores can only be between 0 and 10',
+      );
+    }
+  }
+
+  private async checkIfReviewExist(reviewId: number) {
+    const review = await this.prisma.review.findUnique({
+      where: {
+        id: reviewId,
+      },
+    });
+    if (!review) throw new BadRequestException('Review not found');
   }
 }

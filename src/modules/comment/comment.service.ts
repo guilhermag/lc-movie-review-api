@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { MovieService } from '../movie/movie.service';
 import { UserService } from '../user/user.service';
@@ -12,6 +16,8 @@ export class CommentService {
     private readonly movieService: MovieService,
     private readonly userService: UserService,
   ) {}
+
+  // Methods related to the comment controller.
 
   async createByIdIMDB(idIMDB: string, userId: number, dto: CommentDto) {
     await this.checkRoleForComments(userId);
@@ -61,6 +67,7 @@ export class CommentService {
   }
 
   async findByUser(userId: number) {
+    this.userService.checkIfUserExist(userId);
     return await this.prisma.comment.findMany({
       where: {
         authorId: userId,
@@ -68,10 +75,10 @@ export class CommentService {
     });
   }
 
-  async findById(userId: number, commentId: number) {
-    return await this.prisma.comment.findMany({
+  async findById(commentId: number) {
+    this.checkIfCommentExist(commentId);
+    return await this.prisma.comment.findUnique({
       where: {
-        authorId: userId,
         id: commentId,
       },
     });
@@ -82,9 +89,14 @@ export class CommentService {
     commentId: number,
     dto: CommentAnswerDto,
   ) {
+    await this.checkIfCommentExist(commentId);
     await this.checkRoleForComments(userId);
-    const userEmail = (await this.userService.findById(userId)).email;
-    const answerModel = `Message: ${dto.answerComment}, by: ${userEmail}`;
+
+    const answerModel = await this.createCommentAnswerModel(
+      userId,
+      dto.answerComment,
+    );
+
     const allAnswers: string[] = await this.getAllAnswersById(commentId);
     const atualComment = await this.prisma.comment.update({
       where: {
@@ -101,57 +113,76 @@ export class CommentService {
     return atualComment;
   }
 
-  async getAllAnswersById(commentId: number): Promise<string[]> {
-    const comment = await this.prisma.comment.findUnique({
-      where: {
-        id: commentId,
-      },
-    });
-    return comment.answers;
-  }
-
   async likeCommentById(commentId: number, userEvaluatorId: number) {
+    await this.checkIfCommentExist(commentId);
     await this.checkRoleForLike(userEvaluatorId);
     return await this.likeComment(commentId);
   }
 
   async dislikeCommentById(commentId: number, userEvaluatorId: number) {
+    await this.checkIfCommentExist(commentId);
     await this.checkRoleForLike(userEvaluatorId);
     return await this.dislikeComment(commentId);
   }
 
   async quoteComment(userId: number, commentId: number) {
-    this.checkRoleForQuote(userId);
+    await this.checkIfCommentExist(commentId);
+    await this.checkRoleForQuote(userId);
 
     const allQuotes: number[] = await this.userService.getAllQuotesById(userId);
+    const quotesUpdated: number[] = [...allQuotes, commentId];
 
     return await this.prisma.user.update({
       where: {
         id: userId,
       },
       data: {
-        quotedCommentsId: [...allQuotes, commentId],
+        quotedCommentsId: quotesUpdated,
       },
     });
   }
 
   async deleteById(userId: number, commentId: number) {
+    await this.checkIfCommentExist(commentId);
     await this.checkRoleForMod(userId);
-    return await this.prisma.comment.delete({
+    await this.prisma.comment.delete({
       where: {
         id: commentId,
       },
     });
+    return { message: `The comment with id ${commentId} was deleted` };
   }
 
-  async commentRepeated(commentId: number, userId: number) {
+  async commentRepeated(userId: number, commentId: number) {
+    await this.checkIfCommentExist(commentId);
     await this.checkRoleForMod(userId);
     return await this.markCommentRepeated(commentId);
   }
 
-  async commentNotRepeated(commentId: number, userId: number) {
+  async commentNotRepeated(userId: number, commentId: number) {
+    await this.checkIfCommentExist(commentId);
     await this.checkRoleForMod(userId);
     return await this.unmarkCommentRepeated(commentId);
+  }
+
+  // Methods that only are used in the comment service
+
+  private async createCommentAnswerModel(
+    userId: number,
+    answer: string,
+  ): Promise<string> {
+    const userEmail = (await this.userService.findById(userId)).email;
+    return `Message: ${answer}, by: ${userEmail}`;
+  }
+
+  private async getAllAnswersById(commentId: number): Promise<string[]> {
+    const comment = await this.prisma.comment.findUnique({
+      where: {
+        id: commentId,
+      },
+    });
+    if (!comment) throw new BadRequestException('Comment not found');
+    return comment.answers;
   }
 
   private async likeComment(commentId: number) {
@@ -211,9 +242,9 @@ export class CommentService {
 
   private async checkRoleForQuote(userId: number) {
     const userRole: Role = await this.userService.getUserRole(userId);
-    if (userRole !== 'READER' && userRole !== 'BASIC') {
+    if (userRole === 'READER' || userRole === 'BASIC') {
       throw new ForbiddenException(
-        'Only Advanced and Moderatos users can cite a comment!',
+        'Only Advanced and Moderators users can quote a comment!',
       );
     }
   }
@@ -234,5 +265,14 @@ export class CommentService {
         'Only moderators can delete a comment or mark it as repeated!',
       );
     }
+  }
+
+  private async checkIfCommentExist(commentId: number) {
+    const comment = await this.prisma.comment.findUnique({
+      where: {
+        id: commentId,
+      },
+    });
+    if (!comment) throw new BadRequestException('Comment not found');
   }
 }

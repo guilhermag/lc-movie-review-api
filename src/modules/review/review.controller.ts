@@ -54,17 +54,14 @@ export class ReviewController {
   }
 
   @Get('user/:id')
-  @ApiOperation({ summary: 'Get all the reviews from a user in expecific' })
+  @ApiOperation({ summary: 'Get all the reviews from an user in expecific' })
   getAllReviewsByUser(@Param('id', ParseIntPipe) userId: number) {
     return this.reviewService.findByUser(userId);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a review in expecific' })
-  getReviewById(
-    @GetUser('id') userId: number,
-    @Param('id', ParseIntPipe) reviewId: number,
-  ) {
-    return this.reviewService.findById(userId, reviewId);
+  getReviewById(@Param('id', ParseIntPipe) reviewId: number) {
+    return this.reviewService.findById(reviewId);
   }
 }

@@ -1,4 +1,9 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 
 import { HttpService } from '@nestjs/axios';
 import { AxiosResponse } from 'axios';
@@ -20,6 +25,8 @@ export class UserService {
     private jwt: JwtService,
   ) {}
 
+  // Methods related to the user controller
+
   async login(dto: LoginUserDto): Promise<AxiosResponse> {
     try {
       return await this.httpService.axiosRef
@@ -31,10 +38,10 @@ export class UserService {
     } catch (error) {
       const errorReqStatus: number = error.toJSON().status;
 
-      if (errorReqStatus === 403)
-        throw new ForbiddenException('Credentials Invalid');
-
       if (errorReqStatus === 401)
+        throw new UnauthorizedException('Credentials Invalid');
+
+      if (errorReqStatus === 403)
         throw new ForbiddenException(
           'Number of login attempts was exceeded, wait for 2 MINUTES',
         );
@@ -62,11 +69,14 @@ export class UserService {
           throw new ForbiddenException('Email already exists');
         }
       }
-      throw error;
+      throw new BadRequestException('User email or password invalid');
     }
   }
 
+  // Methods related with other modules
+
   async findById(userId: number) {
+    this.checkIfUserExist(userId);
     return await this.prisma.user.findUnique({
       where: {
         id: userId,
@@ -143,5 +153,12 @@ export class UserService {
       },
     });
     return user.quotedCommentsId;
+  }
+
+  async checkIfUserExist(userId: number) {
+    const user = await this.findById(userId);
+    if (!user) {
+      throw new BadRequestException('User does not exists');
+    }
   }
 }

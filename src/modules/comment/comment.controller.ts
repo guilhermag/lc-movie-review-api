@@ -56,18 +56,15 @@ export class CommentController {
   }
 
   @Get('user/:id')
-  @ApiOperation({ summary: 'Get all the comments from a user in expecific' })
+  @ApiOperation({ summary: 'Get all the comments from an user in expecific' })
   getAllCommentsByUser(@Param('id', ParseIntPipe) userId: number) {
     return this.commentService.findByUser(userId);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a comment in expecific' })
-  getCommentById(
-    @GetUser('id') userId: number,
-    @Param('id', ParseIntPipe) commentId: number,
-  ) {
-    return this.commentService.findById(userId, commentId);
+  getCommentById(@Param('id', ParseIntPipe) commentId: number) {
+    return this.commentService.findById(commentId);
   }
 
   @Post(':id')

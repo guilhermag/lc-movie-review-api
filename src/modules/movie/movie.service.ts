@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 
 import { HttpService } from '@nestjs/axios';
 
-import { MovieDto, MovieResponse } from './dto';
+import { MovieResponse } from './dto';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -14,7 +14,8 @@ export class MovieService {
     private prisma: PrismaService,
   ) {}
 
-  // Methods relationeds with movies only usedes in Movies modules.
+  // Methods related to the movie controller
+
   async findAll() {
     return await this.prisma.movie.findMany();
   }
@@ -43,16 +44,7 @@ export class MovieService {
     });
   }
 
-  // Methods relationeds with movies that are used in others modules.
-  async saveMovie(dto: MovieDto): Promise<number> {
-    const movie = await this.prisma.movie.create({
-      data: {
-        idIMDB: dto.idIMDB,
-        name: dto.name,
-      },
-    });
-    return movie.id;
-  }
+  // Methods related with other modules
 
   async findInApiByMovieIdIMDB(movieIdApi: string): Promise<MovieResponse> {
     try {
@@ -61,7 +53,6 @@ export class MovieService {
         .get(`http://www.omdbapi.com/?i=${movieIdApi}&apikey=${apiKey}`)
         .then((res) => res.data);
     } catch (error) {
-      console.log(error);
       throw new ForbiddenException('Id not found');
     }
   }
@@ -73,7 +64,6 @@ export class MovieService {
         .get(`http://www.omdbapi.com/?t=${movieTitle}&apikey=${apiKey}`)
         .then((res) => res.data);
     } catch (error) {
-      console.log(error);
       throw new ForbiddenException('Title not found');
     }
   }
@@ -119,11 +109,20 @@ export class MovieService {
     return movie.id;
   }
 
-  async findByIdIMDB(movieIdIMDB: string) {
+  // Methods that only are used in the movie service
+
+  private async findByIdIMDB(movieIdIMDB: string) {
     return await this.prisma.movie.findUnique({
       where: {
         idIMDB: movieIdIMDB,
       },
     });
+  }
+
+  private async checkIfUserExist(userId: number) {
+    const user = await this.findById(userId);
+    if (!user) {
+      throw new BadRequestException('User does not exists');
+    }
   }
 }
