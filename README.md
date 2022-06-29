@@ -2,9 +2,11 @@
  <img src="./markdown/logo-project.png" alt="Project Logo" />
 </p>
 
-## MovieReview API
+# MovieReview API
 
-[README in portuguese](./markdown/portuguese/README.md) framework TypeScript starter repository.
+## Introduction
+
+To access this README in portuguese just follow this [link](./markdown/portuguese/README.md).
 
 ## Installation
 
