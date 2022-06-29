@@ -7,7 +7,13 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { MovieService } from '../movie/movie.service';
 import { UserService } from '../user/user.service';
 
-import { CommentDto, CommentAnswerDto, Role } from './dto';
+import {
+  CreateCommentDto,
+  ReplyCommentDto,
+  QuoteCommentDto,
+  IComment,
+  Role,
+} from './dto';
 
 @Injectable()
 export class CommentService {
@@ -19,7 +25,11 @@ export class CommentService {
 
   // Methods related to the comment controller.
 
-  async createByIdIMDB(idIMDB: string, userId: number, dto: CommentDto) {
+  async createByIdIMDB(
+    idIMDB: string,
+    userId: number,
+    dto: CreateCommentDto,
+  ): Promise<IComment> {
     await this.checkRoleForComments(userId);
     const movieId =
       await this.movieService.getMovieIdForCommentOrReviewByIdIMDB(idIMDB);
@@ -40,20 +50,16 @@ export class CommentService {
     return comment;
   }
 
-  async createByTitle(movieTitle: string, userId: number, dto: CommentDto) {
+  async createByTitle(
+    movieTitle: string,
+    userId: number,
+    dto: CreateCommentDto,
+  ): Promise<IComment> {
     await this.checkRoleForComments(userId);
     const movieId = await this.movieService.getMovieIdForCommentOrReviewByTitle(
       movieTitle,
     );
-    const comment = await this.prisma.comment.create({
-      data: {
-        authorId: userId,
-        description: dto.description,
-        likes: 0,
-        dislikes: 0,
-        movieId: movieId,
-      },
-    });
+    const comment = await this.create(dto, userId, movieId);
     const commentAuthorId = comment.authorId;
 
     await this.userService.updateUserScore(commentAuthorId);
@@ -62,12 +68,12 @@ export class CommentService {
     return comment;
   }
 
-  async findAll() {
+  async findAll(): Promise<IComment[]> {
     return await this.prisma.comment.findMany();
   }
 
-  async findByUser(userId: number) {
-    this.userService.checkIfUserExist(userId);
+  async findByUser(userId: number): Promise<IComment[]> {
+    await this.userService.checkIfUserExist(userId);
     return await this.prisma.comment.findMany({
       where: {
         authorId: userId,
@@ -75,7 +81,7 @@ export class CommentService {
     });
   }
 
-  async findById(commentId: number) {
+  async findById(commentId: number): Promise<IComment> {
     this.checkIfCommentExist(commentId);
     return await this.prisma.comment.findUnique({
       where: {
@@ -84,55 +90,76 @@ export class CommentService {
     });
   }
 
-  async answerComment(
+  async replyComment(
     userId: number,
     commentId: number,
-    dto: CommentAnswerDto,
+    reply: ReplyCommentDto,
   ) {
     await this.checkIfCommentExist(commentId);
     await this.checkRoleForComments(userId);
 
-    const answerModel = await this.createCommentAnswerModel(
+    const simpleReply = reply.description;
+    const commentMovieId = (await this.findById(commentId)).movieId;
+    reply.description = await this.createCommentRepplyModel(
+      commentId,
       userId,
-      dto.answerComment,
+      reply.description,
     );
 
-    const allAnswers: string[] = await this.getAllAnswersById(commentId);
-    const atualComment = await this.prisma.comment.update({
+    const allReplies: string[] = await this.getAllRepliesById(commentId);
+    const repliesUpdated: string[] = [...allReplies, simpleReply];
+    await this.prisma.comment.update({
       where: {
         id: commentId,
       },
       data: {
-        answers: [...allAnswers, answerModel],
+        replies: repliesUpdated,
       },
     });
     const commentAuthorId = userId;
 
     await this.userService.updateUserScore(commentAuthorId);
     await this.userService.updateUserRole(commentAuthorId);
-    return atualComment;
+    return await this.create(reply, userId, commentMovieId);
   }
 
-  async likeCommentById(commentId: number, userEvaluatorId: number) {
+  async likeCommentById(
+    commentId: number,
+    userEvaluatorId: number,
+  ): Promise<void> {
     await this.checkIfCommentExist(commentId);
     await this.checkRoleForLike(userEvaluatorId);
-    return await this.likeComment(commentId);
+    await this.likeComment(commentId);
   }
 
-  async dislikeCommentById(commentId: number, userEvaluatorId: number) {
+  async dislikeCommentById(
+    commentId: number,
+    userEvaluatorId: number,
+  ): Promise<void> {
     await this.checkIfCommentExist(commentId);
     await this.checkRoleForLike(userEvaluatorId);
-    return await this.dislikeComment(commentId);
+    await this.dislikeComment(commentId);
   }
 
-  async quoteComment(userId: number, commentId: number) {
+  async quoteComment(
+    userId: number,
+    commentId: number,
+    quote: QuoteCommentDto,
+  ) {
     await this.checkIfCommentExist(commentId);
     await this.checkRoleForQuote(userId);
+
+    const commentMovieId = (await this.findById(commentId)).movieId;
+    quote.description = await this.createQuoteCommentModel(
+      commentId,
+      userId,
+      quote.description,
+    );
 
     const allQuotes: number[] = await this.userService.getAllQuotesById(userId);
     const quotesUpdated: number[] = [...allQuotes, commentId];
 
-    return await this.prisma.user.update({
+    await this.prisma.user.update({
       where: {
         id: userId,
       },
@@ -140,6 +167,7 @@ export class CommentService {
         quotedCommentsId: quotesUpdated,
       },
     });
+    return await this.create(quote, userId, commentMovieId);
   }
 
   async deleteById(userId: number, commentId: number) {
@@ -153,40 +181,55 @@ export class CommentService {
     return { message: `The comment with id ${commentId} was deleted` };
   }
 
-  async commentRepeated(userId: number, commentId: number) {
+  async commentRepeated(userId: number, commentId: number): Promise<void> {
     await this.checkIfCommentExist(commentId);
     await this.checkRoleForMod(userId);
-    return await this.markCommentRepeated(commentId);
+    await this.markCommentRepeated(commentId);
   }
 
-  async commentNotRepeated(userId: number, commentId: number) {
+  async commentNotRepeated(userId: number, commentId: number): Promise<void> {
     await this.checkIfCommentExist(commentId);
     await this.checkRoleForMod(userId);
-    return await this.unmarkCommentRepeated(commentId);
+    await this.unmarkCommentRepeated(commentId);
   }
 
   // Methods that only are used in the comment service
 
-  private async createCommentAnswerModel(
+  private async createCommentRepplyModel(
+    commentId: number,
     userId: number,
-    answer: string,
+    replyMessage: string,
   ): Promise<string> {
-    const userEmail = (await this.userService.findById(userId)).email;
-    return `Message: ${answer}, by: ${userEmail}`;
+    const repliedComment = await this.findById(commentId);
+    const authorEmail = (await this.userService.findById(commentId)).email;
+    const writerEmail = (await this.userService.findById(userId)).email;
+    return `Comment: ${repliedComment.description}, from @${authorEmail}, replied by @${writerEmail} with the message: ${replyMessage}`;
   }
 
-  private async getAllAnswersById(commentId: number): Promise<string[]> {
+  private async createQuoteCommentModel(
+    quotedCommentId: number,
+    userId: number,
+    quoteMessage: string,
+  ): Promise<string> {
+    const quotedComment = await this.findById(quotedCommentId);
+    const authorEmail = (await this.userService.findById(quotedCommentId))
+      .email;
+    const writerEmail = (await this.userService.findById(userId)).email;
+    return `Comment: ${quotedComment.description}, from @${authorEmail}, quoted by @${writerEmail} with the message: ${quoteMessage}`;
+  }
+
+  private async getAllRepliesById(commentId: number): Promise<string[]> {
     const comment = await this.prisma.comment.findUnique({
       where: {
         id: commentId,
       },
     });
-    if (!comment) throw new BadRequestException('Comment not found');
-    return comment.answers;
+
+    return comment.replies;
   }
 
-  private async likeComment(commentId: number) {
-    return await this.prisma.comment.update({
+  private async likeComment(commentId: number): Promise<void> {
+    await this.prisma.comment.update({
       where: {
         id: commentId,
       },
@@ -198,8 +241,8 @@ export class CommentService {
     });
   }
 
-  private async dislikeComment(commentId: number) {
-    return await this.prisma.comment.update({
+  private async dislikeComment(commentId: number): Promise<void> {
+    await this.prisma.comment.update({
       where: {
         id: commentId,
       },
@@ -211,8 +254,8 @@ export class CommentService {
     });
   }
 
-  private async markCommentRepeated(commentId: number) {
-    return await this.prisma.comment.update({
+  private async markCommentRepeated(commentId: number): Promise<void> {
+    await this.prisma.comment.update({
       where: {
         id: commentId,
       },
@@ -222,8 +265,8 @@ export class CommentService {
     });
   }
 
-  private async unmarkCommentRepeated(commentId: number) {
-    return await this.prisma.comment.update({
+  private async unmarkCommentRepeated(commentId: number): Promise<void> {
+    await this.prisma.comment.update({
       where: {
         id: commentId,
       },
@@ -233,14 +276,14 @@ export class CommentService {
     });
   }
 
-  private async checkRoleForComments(userId: number) {
+  private async checkRoleForComments(userId: number): Promise<void> {
     const authorRole: Role = await this.userService.getUserRole(userId);
     if (authorRole === 'READER') {
       throw new ForbiddenException('Readers can not write comments!');
     }
   }
 
-  private async checkRoleForQuote(userId: number) {
+  private async checkRoleForQuote(userId: number): Promise<void> {
     const userRole: Role = await this.userService.getUserRole(userId);
     if (userRole === 'READER' || userRole === 'BASIC') {
       throw new ForbiddenException(
@@ -249,7 +292,7 @@ export class CommentService {
     }
   }
 
-  private async checkRoleForLike(userId: number) {
+  private async checkRoleForLike(userId: number): Promise<void> {
     const authorRole: Role = await this.userService.getUserRole(userId);
     if (authorRole === 'READER' || authorRole === 'BASIC') {
       throw new ForbiddenException(
@@ -258,7 +301,7 @@ export class CommentService {
     }
   }
 
-  private async checkRoleForMod(userId: number) {
+  private async checkRoleForMod(userId: number): Promise<void> {
     const authorRole: Role = await this.userService.getUserRole(userId);
     if (authorRole !== 'MODERATOR') {
       throw new ForbiddenException(
@@ -267,12 +310,28 @@ export class CommentService {
     }
   }
 
-  private async checkIfCommentExist(commentId: number) {
+  private async checkIfCommentExist(commentId: number): Promise<void> {
     const comment = await this.prisma.comment.findUnique({
       where: {
         id: commentId,
       },
     });
     if (!comment) throw new BadRequestException('Comment not found');
+  }
+
+  private async create(
+    dto: CreateCommentDto,
+    userId: number,
+    movieId: number,
+  ): Promise<IComment> {
+    return await this.prisma.comment.create({
+      data: {
+        authorId: userId,
+        description: dto.description,
+        likes: 0,
+        dislikes: 0,
+        movieId: movieId,
+      },
+    });
   }
 }

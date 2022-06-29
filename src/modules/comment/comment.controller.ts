@@ -11,7 +11,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
-import { CommentDto, CommentAnswerDto } from './dto';
+import { CreateCommentDto, ReplyCommentDto, QuoteCommentDto } from './dto';
 import { JwtGuard } from '../auth/guard';
 import { GetUser } from '../auth/decorator';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -28,7 +28,7 @@ export class CommentController {
   createCommentByMovieId(
     @Query('id') idIMDB: string,
     @GetUser('id') userId: number,
-    @Body() dto: CommentDto,
+    @Body() dto: CreateCommentDto,
   ) {
     return this.commentService.createByIdIMDB(idIMDB, userId, dto);
   }
@@ -38,7 +38,7 @@ export class CommentController {
   createCommentByMovieTitle(
     @Query('title') title: string,
     @GetUser('id') userId: number,
-    @Body() dto: CommentDto,
+    @Body() dto: CreateCommentDto,
   ) {
     return this.commentService.createByTitle(title, userId, dto);
   }
@@ -67,14 +67,14 @@ export class CommentController {
     return this.commentService.findById(commentId);
   }
 
-  @Post(':id')
-  @ApiOperation({ summary: 'Logged user answer a comment' })
-  answerCommentById(
+  @Post('reply/:id')
+  @ApiOperation({ summary: 'Logged user replies a comment' })
+  ReplyCommentById(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) commentId: number,
-    @Body() dto: CommentAnswerDto,
+    @Body() dto: ReplyCommentDto,
   ) {
-    return this.commentService.answerComment(userId, commentId, dto);
+    return this.commentService.replyComment(userId, commentId, dto);
   }
 
   @Patch('like/:id')
@@ -102,8 +102,9 @@ export class CommentController {
   quoteCommentById(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) commentId: number,
+    @Body() dto: QuoteCommentDto,
   ) {
-    return this.commentService.quoteComment(userId, commentId);
+    return this.commentService.quoteComment(userId, commentId, dto);
   }
 
   @Post('repeated/:id')

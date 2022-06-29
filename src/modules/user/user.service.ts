@@ -13,16 +13,12 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { CreateUserDto, LoginUserDto, Role } from './dto';
 import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly httpService: HttpService,
     private prisma: PrismaService,
-    private config: ConfigService,
-    private jwt: JwtService,
   ) {}
 
   // Methods related to the user controller
@@ -76,7 +72,6 @@ export class UserService {
   // Methods related with other modules
 
   async findById(userId: number) {
-    this.checkIfUserExist(userId);
     return await this.prisma.user.findUnique({
       where: {
         id: userId,

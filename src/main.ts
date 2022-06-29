@@ -11,7 +11,6 @@ async function bootstrap() {
     .setTitle('MovieForumAPI - MovieReview')
     .setDescription('Movie Forum API done by Guilherme de Araujo Gabriel')
     .setVersion('1.0')
-    .addTag('review')
     .addBearerAuth(
       {
         type: 'http',

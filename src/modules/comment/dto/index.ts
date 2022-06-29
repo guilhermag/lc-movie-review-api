@@ -1,2 +1,4 @@
-export * from './comment.dto';
-export * from './comment-answer.dto';
+export * from './create-comment.dto';
+export * from './reply-comment.dto';
+export * from './quote-comment.dto';
+export * from './interface';

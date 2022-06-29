@@ -1,17 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
-
-export class MovieDto {
-  @IsNotEmpty()
-  @IsString()
-  @ApiProperty()
-  idIMDB: string;
-  @IsNotEmpty()
-  @IsString()
-  @ApiProperty()
-  name: string | null;
-}
-
 export interface MovieResponse {
   Title: string;
   Year: string;

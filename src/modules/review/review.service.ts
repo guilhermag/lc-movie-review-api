@@ -20,6 +20,7 @@ export class ReviewService {
   // Methods related to the comment controller.
 
   async createByIdIMDB(idIMDB: string, userId: number, dto: ReviewDto) {
+    this.checkScore(dto.movieScore);
     const movieId =
       await this.movieService.getMovieIdForCommentOrReviewByIdIMDB(idIMDB);
     const review = await this.prisma.review.create({

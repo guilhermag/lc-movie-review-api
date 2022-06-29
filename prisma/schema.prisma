@@ -30,7 +30,7 @@ model Comment {
   description String
   likes       Int
   dislikes    Int
-  answers     String[]
+  replies     String[]
   repeated    Boolean  @default(false)
   movieId     Int
 
