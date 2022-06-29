@@ -21,12 +21,12 @@ export class MovieService {
   // Methods related to the movie controller
   async findMovieApiById(movieImdbId: string) {
     const movie = await this.findInApiByMovieIdIMDB(movieImdbId);
-    return this.convertToDto(movie);
+    return await this.convertToDto(movie);
   }
 
   async findMovieApiByTitle(movieTitle: string) {
     const movie = await this.findInApiByMovieTitle(movieTitle);
-    return this.convertToDto(movie);
+    return await this.convertToDto(movie);
   }
 
   async findAll() {
@@ -150,7 +150,14 @@ export class MovieService {
     return movie;
   }
 
-  private convertToDto(movieResponse: MovieResponseAPI): CreateMovieDto {
+  private async convertToDto(
+    movieResponse: MovieResponseAPI,
+  ): Promise<CreateMovieDto> {
+    const movieImdbId = movieResponse.imdbID;
+    const movieIdInDatabase = await this.getMovieIdForCommentOrReviewByIdIMDB(
+      movieImdbId,
+    );
+
     const movieDto: CreateMovieDto = {
       idIMDB: movieResponse.imdbID,
       title: movieResponse.Title,
@@ -162,5 +169,15 @@ export class MovieService {
       type: movieResponse.Type,
     };
     return movieDto;
+  }
+
+  private async getArrayOfComments(movieId: number): Promise<string[]> {
+    const comments = await this.findAllComments(movieId);
+    return [...comments.map((comment) => comment.description)];
+  }
+
+  private async getArrayOfReviews(movieId: number): Promise<number[]> {
+    const reviews = await this.findAllReviews(movieId);
+    return [...reviews.map((review) => review.movieScore)];
   }
 }

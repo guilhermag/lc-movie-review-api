@@ -1,24 +1,25 @@
-# Business rules
+# Regras de negócio
 
-## Introduction
+## Introdução
 
-The MovieReview API is an app to create users, sign in with a user credentials and create reviews or comments, interact with other users with replies and quotes on their comments.
+O MovieReview API é um app para criar usuários, logar com as credenciais do usuário, criar reviews(notas) ou comentários, interagir com outros usuários com respostas e citações de seus comentários.
 
-## Description
+## Descrição
 
-- In the MovieReview API it's possible to create a new user
-  - Users are created with email and password.
-  - An user email is unique.
-  - A new users starts with the READER role.
-- Exists 4 roles of users in the app.
-  - Every user has a score that increases when it does certain actions.
-    - Every new user starts with score 0.
-    - The actions that increases the score by 1 point are:
-      - Review a movie.
-      - Create a comment.
-      - Quote a comment.
-      - Reply a comment.
+- Na MovieReview API é possível criar um novo usuário.
+  - Usuários são criados com email e senha.
+  - Um email de usuário é único.
+  - Todos os novos usuários começam com o cargo READER.
+- Existem 4 tipos de cargos de usuários no app.
+  - Todo novo usuário começa com pontuação(score) 0.
+  - Todas as seguintes ações aumentam a pontuação em 1 ponto:
+    - Dar nota(review) para um filme.
+    - Criar um comentário.
+    - Citar um comentário.
+    - Responder um comentário.
   - READER.
+    - Pode logar e procurar por um filme.
+      - Pode ver as informações de um filme e seus comentários.
     - Can sign in and search for a movie.
       - Can see the informations of a movie and its comments.
     - Can review a movie and give it a score, from 0 to 10.
@@ -41,4 +42,4 @@ The MovieReview API is an app to create users, sign in with a user credentials a
     - Can mark or unmark a comment as repeated.
     - Can delete a comment.
 
-[Link to the main document.](../../README.md)
+[Link para o documento principal.](./README.md)

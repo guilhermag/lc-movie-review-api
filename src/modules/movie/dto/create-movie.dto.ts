@@ -34,4 +34,6 @@ export class CreateMovieDto {
   @IsString()
   @ApiProperty()
   type: string;
+  comments?: string[];
+  reviews?: number[];
 }
