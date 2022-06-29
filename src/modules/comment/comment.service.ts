@@ -42,10 +42,9 @@ export class CommentService {
         movieId: movieId,
       },
     });
-    const commentAuthorId = comment.authorId;
 
-    await this.userService.updateUserScore(commentAuthorId);
-    await this.userService.updateUserRole(commentAuthorId);
+    await this.userService.updateUserScore(userId);
+    await this.userService.updateUserRole(userId);
 
     return comment;
   }
@@ -60,10 +59,9 @@ export class CommentService {
       movieTitle,
     );
     const comment = await this.create(dto, userId, movieId);
-    const commentAuthorId = comment.authorId;
 
-    await this.userService.updateUserScore(commentAuthorId);
-    await this.userService.updateUserRole(commentAuthorId);
+    await this.userService.updateUserScore(userId);
+    await this.userService.updateUserRole(userId);
 
     return comment;
   }
@@ -82,7 +80,7 @@ export class CommentService {
   }
 
   async findById(commentId: number): Promise<IComment> {
-    this.checkIfCommentExist(commentId);
+    await this.checkIfCommentExist(commentId);
     return await this.prisma.comment.findUnique({
       where: {
         id: commentId,
@@ -100,7 +98,7 @@ export class CommentService {
 
     const simpleReply = reply.description;
     const commentMovieId = (await this.findById(commentId)).movieId;
-    reply.description = await this.createCommentRepplyModel(
+    reply.description = await this.createCommentReplyModel(
       commentId,
       userId,
       reply.description,
@@ -116,10 +114,9 @@ export class CommentService {
         replies: repliesUpdated,
       },
     });
-    const commentAuthorId = userId;
 
-    await this.userService.updateUserScore(commentAuthorId);
-    await this.userService.updateUserRole(commentAuthorId);
+    await this.userService.updateUserScore(userId);
+    await this.userService.updateUserRole(userId);
     return await this.create(reply, userId, commentMovieId);
   }
 
@@ -167,6 +164,10 @@ export class CommentService {
         quotedCommentsId: quotesUpdated,
       },
     });
+
+    await this.userService.updateUserScore(userId);
+    await this.userService.updateUserRole(userId);
+
     return await this.create(quote, userId, commentMovieId);
   }
 
@@ -195,7 +196,7 @@ export class CommentService {
 
   // Methods that only are used in the comment service
 
-  private async createCommentRepplyModel(
+  private async createCommentReplyModel(
     commentId: number,
     userId: number,
     replyMessage: string,

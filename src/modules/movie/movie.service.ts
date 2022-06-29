@@ -25,6 +25,7 @@ export class MovieService {
   }
 
   async findAllComments(movieId: number) {
+    await this.checkIfMovieExist(movieId);
     return await this.prisma.comment.findMany({
       where: {
         movieId: movieId,
@@ -33,6 +34,7 @@ export class MovieService {
   }
 
   async findAllReviews(movieId: number) {
+    await this.checkIfMovieExist(movieId);
     return await this.prisma.review.findMany({
       where: {
         movieId: movieId,
@@ -41,11 +43,7 @@ export class MovieService {
   }
 
   async findById(movieId: number) {
-    return await this.prisma.movie.findUnique({
-      where: {
-        id: movieId,
-      },
-    });
+    return await this.checkIfMovieExist(movieId);
   }
 
   // Methods related with other modules
@@ -123,10 +121,15 @@ export class MovieService {
     });
   }
 
-  private async checkIfUserExist(userId: number) {
-    const user = await this.findById(userId);
-    if (!user) {
-      throw new BadRequestException('User does not exists');
+  private async checkIfMovieExist(movieId: number) {
+    const movie = await this.prisma.movie.findUnique({
+      where: {
+        id: movieId,
+      },
+    });
+    if (!movie) {
+      throw new BadRequestException('Movie not found');
     }
+    return movie;
   }
 }

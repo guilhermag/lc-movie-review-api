@@ -153,7 +153,7 @@ export class UserService {
   async checkIfUserExist(userId: number) {
     const user = await this.findById(userId);
     if (!user) {
-      throw new BadRequestException('User does not exists');
+      throw new BadRequestException('User not found');
     }
   }
 }

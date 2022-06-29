@@ -30,10 +30,9 @@ export class ReviewService {
         movieId: movieId,
       },
     });
-    const reviewAuthorId = review.authorId;
 
-    await this.userService.updateUserScore(reviewAuthorId);
-    await this.userService.updateUserRole(reviewAuthorId);
+    await this.userService.updateUserScore(userId);
+    await this.userService.updateUserRole(userId);
 
     return review;
   }
@@ -50,10 +49,9 @@ export class ReviewService {
         movieId: movieId,
       },
     });
-    const reviewAuthorId = review.authorId;
 
-    await this.userService.updateUserScore(reviewAuthorId);
-    await this.userService.updateUserRole(reviewAuthorId);
+    await this.userService.updateUserScore(userId);
+    await this.userService.updateUserRole(userId);
 
     return review;
   }
