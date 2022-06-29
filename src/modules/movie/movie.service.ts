@@ -6,7 +6,7 @@ import {
 
 import { HttpService } from '@nestjs/axios';
 
-import { MovieResponse } from './dto';
+import { MovieResponseAPI } from './dto';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -48,7 +48,7 @@ export class MovieService {
 
   // Methods related with other modules
 
-  async findInApiByMovieIdIMDB(movieIdApi: string): Promise<MovieResponse> {
+  async findInApiByMovieIdIMDB(movieIdApi: string): Promise<MovieResponseAPI> {
     try {
       const apiKey = this.config.get('API_KEY_OMDB');
       return await this.httpService.axiosRef
@@ -59,7 +59,7 @@ export class MovieService {
     }
   }
 
-  async findInApiByMovieTitle(movieTitle: string): Promise<MovieResponse> {
+  async findInApiByMovieTitle(movieTitle: string): Promise<MovieResponseAPI> {
     try {
       const apiKey = this.config.get('API_KEY_OMDB');
       return await this.httpService.axiosRef
@@ -75,13 +75,13 @@ export class MovieService {
   ): Promise<number> {
     let movie = await this.findByIdIMDB(movieIdApi);
     if (!movie) {
-      const movieResponse: MovieResponse = await this.findInApiByMovieIdIMDB(
+      const MovieResponseAPI: MovieResponseAPI = await this.findInApiByMovieIdIMDB(
         movieIdApi,
       );
       movie = await this.prisma.movie.create({
         data: {
-          idIMDB: movieResponse.imdbID,
-          name: movieResponse.Title,
+          idIMDB: MovieResponseAPI.imdbID,
+          name: MovieResponseAPI.Title,
         },
       });
       return movie.id;
@@ -97,13 +97,13 @@ export class MovieService {
     ).imdbID;
     let movie = await this.findByIdIMDB(movieIdIMDB);
     if (!movie) {
-      const movieResponse: MovieResponse = await this.findInApiByMovieIdIMDB(
+      const MovieResponseAPI: MovieResponseAPI = await this.findInApiByMovieIdIMDB(
         movieIdIMDB,
       );
       movie = await this.prisma.movie.create({
         data: {
-          idIMDB: movieResponse.imdbID,
-          name: movieResponse.Title,
+          idIMDB: MovieResponseAPI.imdbID,
+          name: MovieResponseAPI.Title,
         },
       });
       return movie.id;

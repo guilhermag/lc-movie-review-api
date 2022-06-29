@@ -69,6 +69,17 @@ export class UserService {
     }
   }
 
+  async turnIntoMod(loggedUserId: number, userId: number) {
+    const loggedUserRole = await this.getUserRole(loggedUserId);
+    this.checkRoleMod(loggedUserRole);
+    if (loggedUserId === userId)
+      throw new ForbiddenException(
+        'It is not possible to turno yourself in a moderator',
+      );
+    await this.checkIfUserExist(userId);
+    await this.alterUserRole(userId, 'MODERATOR');
+  }
+
   // Methods related with other modules
 
   async findById(userId: number) {
@@ -155,5 +166,12 @@ export class UserService {
     if (!user) {
       throw new BadRequestException('User not found');
     }
+  }
+
+  checkRoleMod(userRole: Role) {
+    if (userRole !== 'MODERATOR')
+      throw new ForbiddenException(
+        'Only moderators can turn other users into moderators',
+      );
   }
 }

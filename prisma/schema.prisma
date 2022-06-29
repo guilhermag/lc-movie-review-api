@@ -52,7 +52,13 @@ model Review {
 model Movie {
   id       Int       @id @default(autoincrement())
   idIMDB   String    @unique
-  name     String
+  title    String
+  year     Int
+  genre    String
+  director String
+  plot     String
+  language String
+  type     String
   comments Comment[]
   reviews  Review[]
 

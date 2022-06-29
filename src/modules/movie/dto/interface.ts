@@ -1,4 +1,4 @@
-export interface MovieResponse {
+export interface MovieResponseAPI {
   Title: string;
   Year: string;
   Rated: string;
