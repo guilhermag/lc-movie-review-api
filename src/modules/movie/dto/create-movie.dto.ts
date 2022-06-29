@@ -9,5 +9,29 @@ export class CreateMovieDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  name: string | null;
+  title: string | null;
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  year: number;
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  genre: string;
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  director: string;
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  plot: string;
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  language: string;
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  type: string;
 }

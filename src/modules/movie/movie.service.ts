@@ -6,7 +6,7 @@ import {
 
 import { HttpService } from '@nestjs/axios';
 
-import { MovieResponseAPI } from './dto';
+import { CreateMovieDto, MovieResponseAPI } from './dto';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -19,6 +19,15 @@ export class MovieService {
   ) {}
 
   // Methods related to the movie controller
+  async findMovieApiById(movieImdbId: string) {
+    const movie = await this.findInApiByMovieIdIMDB(movieImdbId);
+    return this.convertToDto(movie);
+  }
+
+  async findMovieApiByTitle(movieTitle: string) {
+    const movie = await this.findInApiByMovieTitle(movieTitle);
+    return this.convertToDto(movie);
+  }
 
   async findAll() {
     return await this.prisma.movie.findMany();
@@ -49,25 +58,23 @@ export class MovieService {
   // Methods related with other modules
 
   async findInApiByMovieIdIMDB(movieIdApi: string): Promise<MovieResponseAPI> {
-    try {
-      const apiKey = this.config.get('API_KEY_OMDB');
-      return await this.httpService.axiosRef
-        .get(`http://www.omdbapi.com/?i=${movieIdApi}&apikey=${apiKey}`)
-        .then((res) => res.data);
-    } catch (error) {
+    const apiKey = this.config.get('API_KEY_OMDB');
+    const movie = await this.httpService.axiosRef
+      .get(`http://www.omdbapi.com/?i=${movieIdApi}&apikey=${apiKey}`)
+      .then((res) => res.data);
+    if (movie.Response === 'False')
       throw new ForbiddenException('Id not found');
-    }
+    return movie;
   }
 
   async findInApiByMovieTitle(movieTitle: string): Promise<MovieResponseAPI> {
-    try {
-      const apiKey = this.config.get('API_KEY_OMDB');
-      return await this.httpService.axiosRef
-        .get(`http://www.omdbapi.com/?t=${movieTitle}&apikey=${apiKey}`)
-        .then((res) => res.data);
-    } catch (error) {
+    const apiKey = this.config.get('API_KEY_OMDB');
+    const movie = await this.httpService.axiosRef
+      .get(`http://www.omdbapi.com/?t=${movieTitle}&apikey=${apiKey}`)
+      .then((res) => res.data);
+    if (movie.Response === 'False')
       throw new ForbiddenException('Title not found');
-    }
+    return movie;
   }
 
   async getMovieIdForCommentOrReviewByIdIMDB(
@@ -75,13 +82,18 @@ export class MovieService {
   ): Promise<number> {
     let movie = await this.findByIdIMDB(movieIdApi);
     if (!movie) {
-      const MovieResponseAPI: MovieResponseAPI = await this.findInApiByMovieIdIMDB(
-        movieIdApi,
-      );
+      const movieResponseAPI: MovieResponseAPI =
+        await this.findInApiByMovieIdIMDB(movieIdApi);
       movie = await this.prisma.movie.create({
         data: {
-          idIMDB: MovieResponseAPI.imdbID,
-          name: MovieResponseAPI.Title,
+          idIMDB: movieResponseAPI.imdbID,
+          title: movieResponseAPI.Title,
+          year: parseInt(movieResponseAPI.Year),
+          genre: movieResponseAPI.Genre,
+          director: movieResponseAPI.Director,
+          plot: movieResponseAPI.Plot,
+          language: movieResponseAPI.Language,
+          type: movieResponseAPI.Type,
         },
       });
       return movie.id;
@@ -97,13 +109,18 @@ export class MovieService {
     ).imdbID;
     let movie = await this.findByIdIMDB(movieIdIMDB);
     if (!movie) {
-      const MovieResponseAPI: MovieResponseAPI = await this.findInApiByMovieIdIMDB(
-        movieIdIMDB,
-      );
+      const movieResponseAPI: MovieResponseAPI =
+        await this.findInApiByMovieIdIMDB(movieIdIMDB);
       movie = await this.prisma.movie.create({
         data: {
-          idIMDB: MovieResponseAPI.imdbID,
-          name: MovieResponseAPI.Title,
+          idIMDB: movieResponseAPI.imdbID,
+          title: movieResponseAPI.Title,
+          year: parseInt(movieResponseAPI.Year),
+          genre: movieResponseAPI.Genre,
+          director: movieResponseAPI.Director,
+          plot: movieResponseAPI.Plot,
+          language: movieResponseAPI.Language,
+          type: movieResponseAPI.Type,
         },
       });
       return movie.id;
@@ -131,5 +148,19 @@ export class MovieService {
       throw new BadRequestException('Movie not found');
     }
     return movie;
+  }
+
+  private convertToDto(movieResponse: MovieResponseAPI): CreateMovieDto {
+    const movieDto: CreateMovieDto = {
+      idIMDB: movieResponse.imdbID,
+      title: movieResponse.Title,
+      year: parseInt(movieResponse.Year),
+      genre: movieResponse.Genre,
+      director: movieResponse.Director,
+      plot: movieResponse.Plot,
+      language: movieResponse.Language,
+      type: movieResponse.Type,
+    };
+    return movieDto;
   }
 }

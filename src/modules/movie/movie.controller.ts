@@ -16,6 +16,18 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 export class MovieController {
   constructor(private readonly movieService: MovieService) {}
 
+  @Get('search/id/:id')
+  @ApiOperation({ summary: 'Search for a movie in OMDb API by the imdb id' })
+  getMovieApiById(@Param('id') movieImdbId: string) {
+    return this.movieService.findMovieApiById(movieImdbId);
+  }
+
+  @Get('search/title/:title')
+  @ApiOperation({ summary: 'Search for a movie in OMDb API by the title' })
+  getMovieApiByTitle(@Param('title') movieTitle: string) {
+    return this.movieService.findMovieApiByTitle(movieTitle);
+  }
+
   @Get('')
   @ApiOperation({ summary: 'Get all the movies with comments or reviews' })
   getAllMoviesInBase() {
