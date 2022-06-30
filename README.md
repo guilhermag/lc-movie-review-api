@@ -31,7 +31,6 @@ The technologies used on this project are:
 - [NestJS framework.](https://nestjs.com/)
   - [Typescript.](https://www.typescriptlang.org/)
   - [Express.](https://expressjs.com/)
-  - Testing: [PactumJS.](https://pactumjs.github.io/) 
 - [Prisma ORM.](https://www.prisma.io/docs/getting-started/quickstart)
 - [ProstgreSQL.](https://www.postgresql.org/)
 - [Docker.](https://www.docker.com/)
