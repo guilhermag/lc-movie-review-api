@@ -4,6 +4,8 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CommentService } from '../comment/comment.service';
+import { Role } from '../comment/dto';
 import { MovieService } from '../movie/movie.service';
 import { UserService } from '../user/user.service';
 
@@ -15,6 +17,7 @@ export class ReviewService {
     private readonly prisma: PrismaService,
     private readonly movieService: MovieService,
     private readonly userService: UserService,
+    private readonly commentService: CommentService,
   ) {}
 
   // Methods related to the comment controller.
@@ -76,6 +79,36 @@ export class ReviewService {
         id: reviewId,
       },
     });
+  }
+
+  async editReviewById(userId: number, reviewId: number, newScore: number) {
+    await this.checkIfReviewExist(reviewId);
+    const authorId = (await this.findById(reviewId)).authorId;
+    const loggedUserRole: Role = await this.userService.getUserRole(userId);
+
+    if (authorId === userId || loggedUserRole === 'MODERATOR') {
+      return await this.prisma.review.update({
+        where: {
+          id: reviewId,
+        },
+        data: {
+          movieScore: newScore,
+        },
+      });
+    }
+
+    throw new ForbiddenException('Only moderators or authors can edit reviews');
+  }
+
+  async deleteById(userId: number, reviewId: number) {
+    await this.checkIfReviewExist(reviewId);
+    await this.commentService.checkRoleForMod(userId);
+    await this.prisma.review.delete({
+      where: {
+        id: reviewId,
+      },
+    });
+    return { message: `The review with id ${reviewId} was deleted` };
   }
 
   // Methods that only are used in the comment service

@@ -7,6 +7,8 @@ import {
   Param,
   ParseIntPipe,
   Query,
+  Patch,
+  Delete,
 } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { ReviewDto } from './dto';
@@ -24,8 +26,8 @@ export class ReviewController {
   @Post('movie/id-imdb?')
   @ApiOperation({ summary: 'Creates a review using the movie imdb id' })
   createReviewByMovieId(
-    @Query('id') idIMDB: string,
     @GetUser('id') userId: number,
+    @Query('id') idIMDB: string,
     @Body() dto: ReviewDto,
   ) {
     return this.reviewService.createByIdIMDB(idIMDB, userId, dto);
@@ -34,8 +36,8 @@ export class ReviewController {
   @Post('movie/title?')
   @ApiOperation({ summary: 'Creates a review using the movie title' })
   createReviewByMovieTitle(
-    @Query('title') title: string,
     @GetUser('id') userId: number,
+    @Query('title') title: string,
     @Body() dto: ReviewDto,
   ) {
     return this.reviewService.createByTitle(title, userId, dto);
@@ -63,5 +65,27 @@ export class ReviewController {
   @ApiOperation({ summary: 'Get a review in expecific' })
   getReviewById(@Param('id', ParseIntPipe) reviewId: number) {
     return this.reviewService.findById(reviewId);
+  }
+
+  @Patch('edit/:id')
+  @ApiOperation({
+    summary:
+      'Logged user can edit own review or from others if the user is a moderator',
+  })
+  editReviewById(
+    @GetUser('id') userId: number,
+    @Param('id', ParseIntPipe) reviewId: number,
+    @Body() newScore: number,
+  ) {
+    return this.reviewService.editReviewById(userId, reviewId, newScore);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Deletes a review' })
+  deleteCommentById(
+    @GetUser('id') userId: number,
+    @Param('id', ParseIntPipe) reviewId: number,
+  ) {
+    return this.reviewService.deleteById(userId, reviewId);
   }
 }

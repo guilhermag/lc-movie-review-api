@@ -125,6 +125,23 @@ export class CommentController {
     return this.commentService.commentNotRepeated(userId, commentId);
   }
 
+  @Patch('edit/:id')
+  @ApiOperation({
+    summary:
+      'Logged user can edit own comment or from others if the user is a moderator',
+  })
+  editCommentById(
+    @GetUser('id') userId: number,
+    @Param('id', ParseIntPipe) commentId: number,
+    @Body() newDescription: string,
+  ) {
+    return this.commentService.editCommentById(
+      userId,
+      commentId,
+      newDescription,
+    );
+  }
+
   @Delete(':id')
   @ApiOperation({ summary: 'Deletes a comment' })
   deleteCommentById(

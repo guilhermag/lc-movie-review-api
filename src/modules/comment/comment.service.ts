@@ -171,6 +171,31 @@ export class CommentService {
     return await this.create(quote, userId, commentMovieId);
   }
 
+  async editCommentById(
+    userId: number,
+    commentId: number,
+    newDescription: string,
+  ) {
+    await this.checkIfCommentExist(commentId);
+    const authorId = (await this.findById(commentId)).authorId;
+    const loggedUserRole: Role = await this.userService.getUserRole(userId);
+
+    if (authorId === userId || loggedUserRole === 'MODERATOR') {
+      return await this.prisma.comment.update({
+        where: {
+          id: commentId,
+        },
+        data: {
+          description: newDescription,
+        },
+      });
+    }
+
+    throw new ForbiddenException(
+      'Only moderators or authors can edit comments',
+    );
+  }
+
   async deleteById(userId: number, commentId: number) {
     await this.checkIfCommentExist(commentId);
     await this.checkRoleForMod(userId);
@@ -192,6 +217,13 @@ export class CommentService {
     await this.checkIfCommentExist(commentId);
     await this.checkRoleForMod(userId);
     await this.unmarkCommentRepeated(commentId);
+  }
+
+  async checkRoleForMod(userId: number): Promise<void> {
+    const authorRole: Role = await this.userService.getUserRole(userId);
+    if (authorRole !== 'MODERATOR') {
+      throw new ForbiddenException('Only moderators can do this action');
+    }
   }
 
   // Methods that only are used in the comment service
@@ -298,15 +330,6 @@ export class CommentService {
     if (authorRole === 'READER' || authorRole === 'BASIC') {
       throw new ForbiddenException(
         'Readers and Basic users can not like or dislike comments!',
-      );
-    }
-  }
-
-  private async checkRoleForMod(userId: number): Promise<void> {
-    const authorRole: Role = await this.userService.getUserRole(userId);
-    if (authorRole !== 'MODERATOR') {
-      throw new ForbiddenException(
-        'Only moderators can delete a comment or mark it as repeated!',
       );
     }
   }

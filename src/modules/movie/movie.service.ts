@@ -157,6 +157,8 @@ export class MovieService {
     const movieIdInDatabase = await this.getMovieIdForCommentOrReviewByIdIMDB(
       movieImdbId,
     );
+    const allComments = await this.getArrayOfComments(movieIdInDatabase);
+    const allReviews = await this.getArrayOfReviews(movieIdInDatabase);
 
     const movieDto: CreateMovieDto = {
       idIMDB: movieResponse.imdbID,
@@ -167,6 +169,8 @@ export class MovieService {
       plot: movieResponse.Plot,
       language: movieResponse.Language,
       type: movieResponse.Type,
+      comments: allComments,
+      reviews: allReviews,
     };
     return movieDto;
   }

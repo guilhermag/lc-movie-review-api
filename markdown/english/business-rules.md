@@ -22,11 +22,13 @@ The MovieReview API is an app to create users, sign in with a user credentials a
     - Can sign in and search for a movie.
       - Can see the informations of a movie and its comments.
     - Can review a movie and give it a score, from 0 to 10.
+    - Can edit own reviews.
     - A READER turns into a BASIC user when their score reaches 20 points.
   - BASIC.
     - Can do everything that a READER does.
     - Can write comments.
     - Can reply comments.
+    - Can edit own comments.
     - A BASIC turns into a ADVANCED user when their score reaches 100 points.
   - ADVANCED.
     - Can do everything that a BASIC does.
@@ -38,7 +40,10 @@ The MovieReview API is an app to create users, sign in with a user credentials a
       - Reaching a score of 1000 poins.
       - Getting turned into a moderator by another moderator.
     - Can do everything that a ADVANCED does.
+    - Can edit any comment, including of other users.
+    - Can edit any review, including of other users.
     - Can mark or unmark a comment as repeated.
+    - Can delete a review.
     - Can delete a comment.
 
 [Link to the main document.](../../README.md)
