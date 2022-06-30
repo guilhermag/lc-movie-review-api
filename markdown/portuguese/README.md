@@ -6,7 +6,7 @@
 
 ## Introdução
 
-[README em inglês](./markdown/portuguese/README.md).
+[README em inglês](../../README.md).
 
 O objetivo desse projeto foi criar uma API para um forúm de avaliação de filmes, aonde é possível criar usuários, logar com esse usuário e fazer as seguintes ações, levando em conta o cargo do usuário no sistema.
 
