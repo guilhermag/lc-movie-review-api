@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 
-export class ReviewDto {
+export class EditCommentDto {
   @IsNotEmpty()
   @ApiProperty()
-  movieScore: number;
+  newDescription: string;
 }

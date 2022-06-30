@@ -11,7 +11,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import { ReviewService } from './review.service';
-import { ReviewDto } from './dto';
+import { CreateReviewDto, EditReviewDto } from './dto';
 import { JwtGuard } from '../auth/guard';
 import { GetUser } from '../auth/decorator';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -28,7 +28,7 @@ export class ReviewController {
   createReviewByMovieId(
     @GetUser('id') userId: number,
     @Query('id') idIMDB: string,
-    @Body() dto: ReviewDto,
+    @Body() dto: CreateReviewDto,
   ) {
     return this.reviewService.createByIdIMDB(idIMDB, userId, dto);
   }
@@ -38,7 +38,7 @@ export class ReviewController {
   createReviewByMovieTitle(
     @GetUser('id') userId: number,
     @Query('title') title: string,
-    @Body() dto: ReviewDto,
+    @Body() dto: CreateReviewDto,
   ) {
     return this.reviewService.createByTitle(title, userId, dto);
   }
@@ -75,9 +75,9 @@ export class ReviewController {
   editReviewById(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) reviewId: number,
-    @Body() newScore: number,
+    @Body() dto: EditReviewDto,
   ) {
-    return this.reviewService.editReviewById(userId, reviewId, newScore);
+    return this.reviewService.editReviewById(userId, reviewId, dto);
   }
 
   @Delete(':id')

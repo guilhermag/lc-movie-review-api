@@ -9,7 +9,7 @@ import { Role } from '../comment/dto';
 import { MovieService } from '../movie/movie.service';
 import { UserService } from '../user/user.service';
 
-import { ReviewDto } from './dto';
+import { CreateReviewDto, EditReviewDto } from './dto';
 
 @Injectable()
 export class ReviewService {
@@ -22,7 +22,7 @@ export class ReviewService {
 
   // Methods related to the comment controller.
 
-  async createByIdIMDB(idIMDB: string, userId: number, dto: ReviewDto) {
+  async createByIdIMDB(idIMDB: string, userId: number, dto: CreateReviewDto) {
     this.checkScore(dto.movieScore);
     const movieId =
       await this.movieService.getMovieIdForCommentOrReviewByIdIMDB(idIMDB);
@@ -40,7 +40,11 @@ export class ReviewService {
     return review;
   }
 
-  async createByTitle(movieTitle: string, userId: number, dto: ReviewDto) {
+  async createByTitle(
+    movieTitle: string,
+    userId: number,
+    dto: CreateReviewDto,
+  ) {
     this.checkScore(dto.movieScore);
     const movieId = await this.movieService.getMovieIdForCommentOrReviewByTitle(
       movieTitle,
@@ -81,7 +85,7 @@ export class ReviewService {
     });
   }
 
-  async editReviewById(userId: number, reviewId: number, newScore: number) {
+  async editReviewById(userId: number, reviewId: number, dto: EditReviewDto) {
     await this.checkIfReviewExist(reviewId);
     const authorId = (await this.findById(reviewId)).authorId;
     const loggedUserRole: Role = await this.userService.getUserRole(userId);
@@ -92,7 +96,7 @@ export class ReviewService {
           id: reviewId,
         },
         data: {
-          movieScore: newScore,
+          movieScore: dto.newScore,
         },
       });
     }

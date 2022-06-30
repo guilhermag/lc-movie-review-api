@@ -13,6 +13,7 @@ import {
   QuoteCommentDto,
   IComment,
   Role,
+  EditCommentDto,
 } from './dto';
 
 @Injectable()
@@ -174,7 +175,7 @@ export class CommentService {
   async editCommentById(
     userId: number,
     commentId: number,
-    newDescription: string,
+    dto: EditCommentDto,
   ) {
     await this.checkIfCommentExist(commentId);
     const authorId = (await this.findById(commentId)).authorId;
@@ -186,7 +187,7 @@ export class CommentService {
           id: commentId,
         },
         data: {
-          description: newDescription,
+          description: dto.newDescription,
         },
       });
     }

@@ -11,7 +11,12 @@ import {
   Delete,
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
-import { CreateCommentDto, ReplyCommentDto, QuoteCommentDto } from './dto';
+import {
+  CreateCommentDto,
+  ReplyCommentDto,
+  QuoteCommentDto,
+  EditCommentDto,
+} from './dto';
 import { JwtGuard } from '../auth/guard';
 import { GetUser } from '../auth/decorator';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -133,13 +138,9 @@ export class CommentController {
   editCommentById(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) commentId: number,
-    @Body() newDescription: string,
+    @Body() dto: EditCommentDto,
   ) {
-    return this.commentService.editCommentById(
-      userId,
-      commentId,
-      newDescription,
-    );
+    return this.commentService.editCommentById(userId, commentId, dto);
   }
 
   @Delete(':id')
