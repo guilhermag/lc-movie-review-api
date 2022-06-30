@@ -47,14 +47,16 @@ Para rodar esse projeto será necessário o [Docker.](https://www.docker.com/) e
   - É possível mudar as portas padrões, apenas se certifique de alterar nos arquivos do projeto.
   - A instalação da Auth API é documentada no seu respectivo repositório.
 - Docker rodando no background com um Postgres container, mais isntruções posteriormente.
-  - É possível não utiliza o docker, só se certifique de colocar o link correto para o db no arquivo ```.env```.
+  - É possível não utilizar o docker, só se certifique de colocar o link correto para o db no arquivo ```.env```.
+- Ambas as APIs precisam se conectar ao mesmo banco de dados, então certifique-se que essa conexão é a mesma nos arquivos ```.env```.
+  - A Auth API não cria nenhum dado novo, apenas confere os dados do db.
 
 Para criar o banco de dados com o docker apenas clone o repositório, vá para  a sua pasta e rode o o arquivo ```docker-compose.yml```.
 
 ### Instalação do projeto
 
 ```bash
-# clones o rep
+# clona o rep
 $ git clone https://github.com/guilhermag/lc-movie-review-api.git
 $ cd lc-movie-review-api/
 
@@ -100,6 +102,13 @@ $ npm run start
 $ npm run start:dev
 ```
 
+É possível consultar e fazer alterações no banco a partir do localhost, o prisma possuí o [Prisma studio](https://www.prisma.io/docs/concepts/components/prisma-studio), e a  [documentação](https://www.prisma.io/docs/concepts/components/prisma-studio).
+
+```bash
+# na pasta do projeto digite
+$ npx prisma studio
+```
+
 ### Documentação
 
 O Swagger foi utilizado para documentar essa API, então toda a informação do app pode ser encontrada no [Swagger endpoint (/api-docs/)](http://localhost:3333/api-docs/).
@@ -113,7 +122,7 @@ Para esse app foram feitos apenas os testes e2e, eles podem ser acessados com os
 $ npm run test:e2e
 ```
 
-Todos os outros scripts possíveis de serem utilizados com ```npm run ...``` podem ser encontrados no ```packge.json```.
+Todos os outros scripts possíveis de serem utilizados com ```npm run ...``` podem ser encontrados no ```package.json```.
 
 ## Contato
 

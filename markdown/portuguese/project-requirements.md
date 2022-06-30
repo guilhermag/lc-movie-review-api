@@ -10,7 +10,7 @@
 - Um usuário não autenticado(que não possui o token) não poderá realizar ações no sistema.
 - Um usuário com token invalido não poderá realizar ações no sistema.
 - Todas as tentativas falhas de login devem ser salvas em um cache.
-- Caso um usuário tente 3 vezes logar e erre, na 4 vez deverá ser retornado uma mensagem de “limite de tentativas excedido “
+- Caso um usuário tente 3 vezes logar e erre, na 4 vez deverá ser retornado uma mensagem de ```limite de tentativas excedido```.
 
 ## Requisitos não funcionais
 

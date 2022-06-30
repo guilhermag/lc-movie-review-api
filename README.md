@@ -48,6 +48,8 @@ To run this project you'll need [Docker.](https://www.docker.com/) and the [auth
   - The installation of the Auth API is documented in the respective repository.
 - Docker running in background with the Postgres container, instructions ahead.
   - It's possible not use docker, just make sure to put the correct db link on the ```.env``` file.
+- Both API's need to connect to the same database, so make sure that connection it's the same on the ```.env``` file.
+  - The Auth API doesn't create new data, just read it from the db.
 
 To create the postgres database with docker just clone the repository, go to the folder and run the ```docker-compose.yml``` file.
 
@@ -75,7 +77,7 @@ $ npm run db:dev:restart
 To run this app is needed to config the environment variables in the ```.env``` file:
 
 ```bash
-# your database url for connection
+# your database url for connection, that is the same of the auth api
 DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE"
 
 # your jwt secret that must be the same on this app and in the authentication api
@@ -99,6 +101,13 @@ $ npm run start
 $ npm run start:dev
 ```
 
+It's possible to consult and make updates in the database locally, prisma has the [Prisma studio](https://www.prisma.io/studio), and the [documentation](https://www.prisma.io/docs/concepts/components/prisma-studio).
+
+```bash
+# in the app folder type
+$ npx prisma studio
+```
+
 ### Documentation
 
 Swagger was used to document the API, so all the app information can be found on the [Swagger endpoint (/api-docs/)](http://localhost:3333/api-docs/).
@@ -112,7 +121,7 @@ For this app just end to end test were made, they can be accessed with the follo
 $ npm run test:e2e
 ```
 
-All the others scripts possibles te be used with ```npm run ...``` can be found in the ```packge.json```.
+All the others scripts possibles te be used with ```npm run ...``` can be found in the ```package.json```.
 
 ## Stay in touch
 
