@@ -102,6 +102,7 @@ $ npm run start:dev
 ### Documentation
 
 Swagger was used to document the API, so all the app information can be found on the [Swagger endpoint (/api-docs/)](http://localhost:3333/api-docs/).
+
 ## Test
 
 For this app just end to end test were made, they can be accessed with the following commands.
@@ -111,7 +112,7 @@ For this app just end to end test were made, they can be accessed with the follo
 $ npm run test:e2e
 ```
 
-All the others scripts possibles te be used with ```npm run ...``` can be found in the ```packge.json```
+All the others scripts possibles te be used with ```npm run ...``` can be found in the ```packge.json```.
 
 ## Stay in touch
 

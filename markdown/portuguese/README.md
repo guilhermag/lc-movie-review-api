@@ -26,70 +26,71 @@ Com o intuito de deixar esse documento o mais limpo possível, as regras de neg�
 
 ### Stacks
 
-The technologies used on this project are:
+As tecnologias utilizada para esse projeto foram:
 
 - [NestJS framework.](https://nestjs.com/)
   - [Typescript.](https://www.typescriptlang.org/)
   - [Express.](https://expressjs.com/)
-  - Testing: [PactumJS.](https://pactumjs.github.io/) 
+  - Testes: [PactumJS.](https://pactumjs.github.io/) 
 - [Prisma ORM.](https://www.prisma.io/docs/getting-started/quickstart)
 - [ProstgreSQL.](https://www.postgresql.org/)
 - [Docker.](https://www.docker.com/)
 - [OMDb API - The Open Movie Database](http://omdbapi.com/)
 
-## Installation
+## Instalação
 
-### Pre installation
+### Pré-instalação
 
-To run this project you'll need [Docker.](https://www.docker.com/) and the [authentication api](https://github.com/guilhermag/lc-movie-review-auth) that is used to confirm the user sign in, so to the project work correctly in local is needed:
+Para rodar esse projeto será necessário o [Docker.](https://www.docker.com/) e a [api de autenticação](https://github.com/guilhermag/lc-movie-review-auth) que é usada para confirmar o login do usuário, dessa forma para que o projeto funcione corretamente é necessário:
 
-- Auth API running on port: 3000(default).
-  - It's possible to change the default ports, just make sure to change in the project files.
-  - The installation of the Auth API is documented in the respective repository.
-- Docker running in background with the Postgres container, instructions ahead.
-  - It's possible not use docker, just make sure to put the correct db link on the ```.env``` file.
+- Auth API rodando na porta: 3000(padrão).
+  - É possível mudar as portas padrões, apenas se certifique de alterar nos arquivos do projeto.
+  - A instalação da Auth API é documentada no seu respectivo repositório.
+- Docker rodando no background com um Postgres container, mais isntruções posteriormente.
+  - É possível não utiliza o docker, só se certifique de colocar o link correto para o db no arquivo ```.env```.
 
-To create the postgres database with docker just clone the repository, go to the folder and run the ```docker-compose.yml``` file.
+Para criar o banco de dados com o docker apenas clone o repositório, vá para  a sua pasta e rode o o arquivo ```docker-compose.yml```.
 
-### Project installation
+### Instalação do projeto
 
 ```bash
-# clones the rep
+# clones o rep
 $ git clone https://github.com/guilhermag/lc-movie-review-api.git
 $ cd lc-movie-review-api/
 
-# creates the database
+# cria o database
 $ npm run db:dev:up
 
-# installing all the dependencies
+# instala todas as dependências
 $ npm install
 
-# script used to restart the db and run all the prisma migrations
+# script usado para reiniciar o banco de dados e rodar todas as migrations do prisma
 $ npm run db:dev:restart
 ```
 
-## Project execution
+## Execução do projeto
 
-### Pre configuration
+### Pré-configuração
 
-To run this app is needed to config the environment variables in the ```.env``` file:
+Para rodar esse app é preciso configurar as variáveis de ambiente utilizadas no projeto pelo arquivo ```.env```.
 
 ```bash
-# your database url for connection
+# sua url de coneção com o banco de dados
 DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE"
 
-# your jwt secret that must be the same on this app and in the authentication api
+# seu segredo jwt, precisar ser o mesmo utilizado na Auth Api
 JWT_SECRET="your-jwt-secret"
 
-# your api key to be able of make requests in the ombd api
+# a sua api key para conseguir fazer requisições para a ombd api
 API_KEY_OMDB="your-api-key"
 ```
 
-In the root folder exists a file ```.env.example``` which serves as an example, it's possible to create a new ```.env``` or just rename the ```.env.example``` file, and fill with your environment variables.
+Na para raiz existe um arquivo ```.env.example``` ele serve como um exemplo/modelo, é possível criar um novo ```.env```  ou simplesmente renomear o arquivo ```.env.example```, e preenchê-lo com as suas variáveis de ambiente.
 
-The project is set to run on port 3333, so all the endpoints are located in the ```http://localhost:3333/...```.
+O projeto foi configurado para rodar na porta 3333, logo todos os endpoinst estarão locarizados em ```http://localhost:3333/...```.
 
-### Running the app
+
+### Rodando o app
 
 ```bash
 # development
@@ -99,23 +100,24 @@ $ npm run start
 $ npm run start:dev
 ```
 
-### Documentation
+### Documentação
 
-Swagger was used to document the API, so all the app information can be found on the [Swagger endpoint (/api-docs/)](http://localhost:3333/api-docs/).
-## Test
+O Swagger foi utilizado para documentar essa API, então toda a informação do app pode ser encontrada no [Swagger endpoint (/api-docs/)](http://localhost:3333/api-docs/).
 
-For this app just end to end test were made, they can be accessed with the following commands.
+## Testes
+
+Para esse app foram feitos apenas os testes e2e, eles podem ser acessados com os seguintes comandos.
 
 ```bash
 # e2e tests
 $ npm run test:e2e
 ```
 
-All the others scripts possibles te be used with ```npm run ...``` can be found in the ```packge.json```
+Todos os outros scripts possíveis de serem utilizados com ```npm run ...``` podem ser encontrados no ```packge.json```.
 
-## Stay in touch
+## Contato
 
-- Author - Guilherme de Araujo Gabriel
+- Autor - Guilherme de Araujo Gabriel
 - Email - [guilhermag@gmail.com](guilhermag@gmail.com)
 - Github - [@guilhermag](https://github.com/guilhermag)
 - LinkedIn - [Guilherme Gabriel](https://www.linkedin.com/in/guilherme-gabriel-22961610a/)

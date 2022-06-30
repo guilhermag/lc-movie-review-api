@@ -20,31 +20,29 @@ O MovieReview API é um app para criar usuários, logar com as credenciais do us
   - READER.
     - Pode logar e procurar por um filme.
       - Pode ver as informações de um filme e seus comentários.
-    - Can sign in and search for a movie.
-      - Can see the informations of a movie and its comments.
-    - Can review a movie and give it a score, from 0 to 10.
-    - A READER turns into a BASIC user when their score reaches 20 points.
+    - Pode avaliar (review) um filme, com uma nota de 0 a 10.
+    - Pode editar seus próprios reviews.
+    - o READER se torna um usuário BASIC quando atinge uma pontuação de 20 pontos.
   - BASIC.
-    - Can do everything that a READER does.
-    - Can write comments.
-    - Can reply comments.
-    - Can edit own comments.
-    - A BASIC turns into a ADVANCED user when their score reaches 100 points.
+    - Pode fazer tudo que o READER faz.
+    - Pode escrever comentários.
+    - Pode responder comentários.
+    - Pode editar seus próprios comentários.
+    - o BASIC se torna um usuário ADVANCED quando atinge uma pontuação de 100 pontos.
   - ADVANCED.
-    - Can do everything that a BASIC does.
-    - Can quote comments from others.
-    - Can like or dislike a comment.
-    - A ADVANCED turns into a MODERATOR user when their score reaches 1000 points.
+    - Pode fazer tudo que o BASIC faz.
+    - Pode citar comentários de outras pessoas.
+    - Pode dar like ou dislike em um comentário.
+    - o ADVANCED se torna um usuário MODERATOR quando atinge uma pontuação de 1000 pontos.
   - MODERATOR.
-    - There is 2 ways of a user turns into a moderator:
-      - Reaching a score of 1000 poins.
-      - Getting turned into a moderator by another moderator.
-    - Can do everything that a ADVANCED does.
-    - Can edit any comment, including of other users.
-    - Can edit any review, including of other users.
-    - Can mark or unmark a comment as repeated.
-    - Can delete a review.
-    - Can delete a comment.
-
+    - Existem 2 maneiras de se tornar um MODERATOR.
+      - Alcançando um score de 1000 pontos.
+      - Ter ser cargo alterado por outro MODERATOR.
+    - Pode fazer tudo que o ADVANCED faz.
+    - Pode editar um comentário, incluíndo o de outros usuários.
+    - Pode editar um review, incluíndo o de outros usuários.
+    - Pode marcar ou desmarcar um comentário como repetido.
+    - Pode deletar um review.
+    - Pode deletar um comentário.
 
 [Link para o documento principal.](./README.md)

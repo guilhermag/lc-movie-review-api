@@ -36,9 +36,9 @@ The MovieReview API is an app to create users, sign in with a user credentials a
     - Can like or dislike a comment.
     - A ADVANCED turns into a MODERATOR user when their score reaches 1000 points.
   - MODERATOR.
-    - There is 2 ways of a user turns into a moderator:
+    - There is 2 ways of a user turns into a MODERATOR:
       - Reaching a score of 1000 poins.
-      - Getting turned into a moderator by another moderator.
+      - Getting turned into a MODERATOR by another MODERATOR.
     - Can do everything that a ADVANCED does.
     - Can edit any comment, including of other users.
     - Can edit any review, including of other users.
