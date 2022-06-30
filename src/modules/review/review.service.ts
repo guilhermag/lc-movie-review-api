@@ -3,7 +3,7 @@ import {
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { CommentService } from '../comment/comment.service';
 import { Role } from '../comment/dto';
 import { MovieService } from '../movie/movie.service';

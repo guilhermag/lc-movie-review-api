@@ -3,6 +3,9 @@ import { IsNotEmpty } from 'class-validator';
 
 export class CreateReviewDto {
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({
+    example: '5',
+    description: 'A movie review, can be a value from 0 to 10',
+  })
   movieScore: number;
 }

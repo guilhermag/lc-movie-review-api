@@ -113,15 +113,6 @@ $ npx prisma studio
 
 O Swagger foi utilizado para documentar essa API, então toda a informação do app pode ser encontrada no [Swagger endpoint (/api-docs/)](http://localhost:3333/api-docs/).
 
-## Testes
-
-Para esse app foram feitos apenas os testes e2e, eles podem ser acessados com os seguintes comandos.
-
-```bash
-# e2e tests
-$ npm run test:e2e
-```
-
 Todos os outros scripts possíveis de serem utilizados com ```npm run ...``` podem ser encontrados no ```package.json```.
 
 ## Contato

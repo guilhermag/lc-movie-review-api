@@ -3,7 +3,11 @@ import { IsNotEmpty } from 'class-validator';
 
 export class CreateCommentDto {
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({
+    example: 'The plot of this movie just blew my mind',
+    description: 'A movie comment',
+    default: 'message of the comment',
+  })
   description: string;
 }
 
