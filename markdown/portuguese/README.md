@@ -23,6 +23,7 @@ Com o intuito de deixar esse documento o mais limpo possível, as regras de neg�
 
 - [Regras de negócio.](./business-rules.md)
 - [Requisitos de projeto.](./project-requirements.md)
+- [Guia swagger.](./swagger-guide.md)
 
 ### Stacks
 

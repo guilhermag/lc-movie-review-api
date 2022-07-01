@@ -23,6 +23,7 @@ With the goal of keeping this document clean, the business rules and requirement
 
 - [Business rules.](./markdown/english/business-rules.md)
 - [Project requirements.](./markdown/english/project-requirements.md)
+- [Swagger guide.](./markdown/english/swagger-guide.md)
 
 ### Stacks
 
