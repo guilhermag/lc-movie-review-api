@@ -1,4 +1,6 @@
 import { CommentSwagger } from './comments.swagger';
+import { QuoteSwagger } from './quote.swagger';
+import { ReplySwagger } from './reply.swagger';
 
 export const created = {
   status: 201,
@@ -42,6 +44,18 @@ export const userNotFound = {
 export const commentNotFound = {
   status: 403,
   description: 'Comment not found',
+};
+
+export const reply = {
+  status: 200,
+  description: 'The comment created with the reply',
+  type: ReplySwagger,
+};
+
+export const quote = {
+  status: 200,
+  description: 'The comment create with the quote',
+  type: QuoteSwagger,
 };
 
 export const deleted = {

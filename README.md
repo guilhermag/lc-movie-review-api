@@ -47,11 +47,14 @@ To run this project you'll need [Docker.](https://www.docker.com/) and the [auth
   - It's possible to change the default ports, just make sure to change in the project files.
   - The installation of the Auth API is documented in the respective repository.
 - Docker running in background with the Postgres container, instructions ahead.
+  - If you use linux make sure to have the ```compose``` lib installed.
   - It's possible not use docker, just make sure to put the correct db link on the ```.env``` file.
 - Both API's need to connect to the same database, so make sure that connection it's the same on the ```.env``` file.
   - The Auth API doesn't create new data, just read it from the db.
 
 To create the postgres database with docker just clone the repository, go to the folder and run the ```docker-compose.yml``` file.
+
+*Tip: Postgres is set to run in the port 5432 by the docker-compose.yml, so make sure that this port is available or change it in the docker-compose.yml.*
 
 ### Project installation
 

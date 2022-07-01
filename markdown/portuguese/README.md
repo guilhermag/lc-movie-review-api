@@ -47,11 +47,14 @@ Para rodar esse projeto será necessário o [Docker.](https://www.docker.com/) e
   - É possível mudar as portas padrões, apenas se certifique de alterar nos arquivos do projeto.
   - A instalação da Auth API é documentada no seu respectivo repositório.
 - Docker rodando no background com um Postgres container, mais isntruções posteriormente.
+  - Se estiver usando o linux certifique-se de possuir a biblioteca ```compose``` instalada.
   - É possível não utilizar o docker, só se certifique de colocar o link correto para o db no arquivo ```.env```.
 - Ambas as APIs precisam se conectar ao mesmo banco de dados, então certifique-se que essa conexão é a mesma nos arquivos ```.env```.
   - A Auth API não cria nenhum dado novo, apenas confere os dados do db.
 
 Para criar o banco de dados com o docker apenas clone o repositório, vá para  a sua pasta e rode o o arquivo ```docker-compose.yml```.
+
+*Dica: O Postgres funciona por padrão na porta 5432, configurado pelo docker-compose.yml, então certifique-se que essa porta esteja disponível ou mude o arquivo docker-compose.yml.*
 
 ### Instalação do projeto
 

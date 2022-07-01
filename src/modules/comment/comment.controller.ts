@@ -35,6 +35,8 @@ import {
   delError,
   deleted,
   movieNotFound,
+  quote,
+  reply,
   userNotFound,
 } from './swagger/swagger.responses';
 
@@ -93,15 +95,6 @@ export class CommentController {
     return this.commentService.findById(commentId);
   }
 
-  @Post('reply/:id')
-  ReplyCommentById(
-    @GetUser('id') userId: number,
-    @Param('id', ParseIntPipe) commentId: number,
-    @Body() dto: ReplyCommentDto,
-  ) {
-    return this.commentService.replyComment(userId, commentId, dto);
-  }
-
   @Patch('like/:id')
   @ApiOperation({ summary: 'Logged user likes a comment' })
   @ApiResponse(changeSuccess)
@@ -124,12 +117,21 @@ export class CommentController {
     return this.commentService.dislikeCommentById(commentId, userEvaluatorId);
   }
 
+  @Post('reply/:id')
+  @ApiOperation({ summary: 'Logged user replies a comment' })
+  @ApiOperation(reply)
+  @ApiResponse(commentNotFound)
+  ReplyCommentById(
+    @GetUser('id') userId: number,
+    @Param('id', ParseIntPipe) commentId: number,
+    @Body() dto: ReplyCommentDto,
+  ) {
+    return this.commentService.replyComment(userId, commentId, dto);
+  }
+
   @Post('quote/:id')
-  @ApiOperation(changeSuccess)
-  @ApiResponse({
-    status: 201,
-    description: 'sucess',
-  })
+  @ApiOperation({ summary: 'Logged user quotes a comment' })
+  @ApiResponse(quote)
   @ApiResponse(commentNotFound)
   quoteCommentById(
     @GetUser('id') userId: number,

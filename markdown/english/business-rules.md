@@ -28,11 +28,15 @@ The MovieReview API is an app to create users, sign in with a user credentials a
     - Can do everything that a READER does.
     - Can write comments.
     - Can reply comments.
+      - Replying a comment creates a new comment folowing this model:
+        - 'Comment: {replied comment description}, from @{author email}, replied by @{writer email} with the message: {reply Message}'
     - Can edit own comments.
     - A BASIC turns into a ADVANCED user when their score reaches 100 points.
   - ADVANCED.
     - Can do everything that a BASIC does.
     - Can quote comments from others.
+      - Quoting a comment creates a new comment folowing this model:
+        - 'Comment: {quoted comment description}, from @{author email}, quoted by @{writer email} with the message: {quote message}'
     - Can like or dislike a comment.
     - A ADVANCED turns into a MODERATOR user when their score reaches 1000 points.
   - MODERATOR.
