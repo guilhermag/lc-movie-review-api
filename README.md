@@ -17,7 +17,7 @@ The goal of this project was create an API for a movie review forum, where is po
 - Mark or unmark a comment as repeated
 - Delete a comment.
 
-### Business rules and requirements
+### Documentation
 
 With the goal of keeping this document clean, the business rules and requirements are detailed in the files above.
 
@@ -86,6 +86,8 @@ JWT_SECRET="your-jwt-secret"
 API_KEY_OMDB="your-api-key"
 ```
 
+To get an OMDb api key you just need to register on the [api's website.](https://www.omdbapi.com/apikey.aspx)
+
 In the root folder exists a file ```.env.example``` which serves as an example, it's possible to create a new ```.env``` or just rename the ```.env.example``` file, and fill with your environment variables.
 
 The project is set to run on port 3333, so all the endpoints are located in the ```http://localhost:3333/...```.
@@ -101,6 +103,8 @@ $ npm run start:dev
 ```
 
 It's possible to consult and make updates in the database locally, prisma has the [Prisma studio](https://www.prisma.io/studio), and the [documentation](https://www.prisma.io/docs/concepts/components/prisma-studio).
+
+*Tip: Prisma studio can be helpful to change user roles, with that you can test all the features of the app, or just check de database data, like score, comments or reviews...*
 
 ```bash
 # in the app folder type

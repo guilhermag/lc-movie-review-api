@@ -14,17 +14,30 @@ import { ReviewService } from './review.service';
 import { CreateReviewDto, EditReviewDto } from './dto';
 import { JwtGuard } from '../auth/guard';
 import { GetUser } from '../auth/decorator';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @UseGuards(JwtGuard)
 @ApiBearerAuth('JWT-auth')
 @Controller('review')
-@ApiTags('Review')
+@ApiTags('Reviews')
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
   @Post('movie/id-imdb?')
   @ApiOperation({ summary: 'Creates a review using the movie imdb id' })
+  @ApiResponse({
+    status: 201,
+    description: 'sucess',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'fail',
+  })
   createReviewByMovieId(
     @GetUser('id') userId: number,
     @Query('id') idIMDB: string,
@@ -35,6 +48,14 @@ export class ReviewController {
 
   @Post('movie/title?')
   @ApiOperation({ summary: 'Creates a review using the movie title' })
+  @ApiResponse({
+    status: 201,
+    description: 'sucess',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'fail',
+  })
   createReviewByMovieTitle(
     @GetUser('id') userId: number,
     @Query('title') title: string,
@@ -45,24 +66,56 @@ export class ReviewController {
 
   @Get('')
   @ApiOperation({ summary: 'Get all the reviews' })
+  @ApiResponse({
+    status: 201,
+    description: 'sucess',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'fail',
+  })
   getAllReviews() {
     return this.reviewService.findAll();
   }
 
   @Get('logged-user')
   @ApiOperation({ summary: 'Get all the reviews from the logged user' })
+  @ApiResponse({
+    status: 201,
+    description: 'sucess',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'fail',
+  })
   getAllReviewsOfLoggedUser(@GetUser('id') userId: number) {
     return this.reviewService.findByUser(userId);
   }
 
   @Get('user/:id')
   @ApiOperation({ summary: 'Get all the reviews from an user in expecific' })
+  @ApiResponse({
+    status: 201,
+    description: 'sucess',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'fail',
+  })
   getAllReviewsByUser(@Param('id', ParseIntPipe) userId: number) {
     return this.reviewService.findByUser(userId);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a review in expecific' })
+  @ApiResponse({
+    status: 201,
+    description: 'sucess',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'fail',
+  })
   getReviewById(@Param('id', ParseIntPipe) reviewId: number) {
     return this.reviewService.findById(reviewId);
   }
@@ -71,6 +124,14 @@ export class ReviewController {
   @ApiOperation({
     summary:
       'Logged user can edit own review or from others if the user is a moderator',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'sucess',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'fail',
   })
   editReviewById(
     @GetUser('id') userId: number,
@@ -82,6 +143,14 @@ export class ReviewController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Deletes a review' })
+  @ApiResponse({
+    status: 201,
+    description: 'sucess',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'fail',
+  })
   deleteCommentById(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) reviewId: number,

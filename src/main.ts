@@ -9,8 +9,19 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('MovieForumAPI - MovieReview')
-    .setDescription('Movie Forum API done by Guilherme de Araujo Gabriel')
+    .setDescription(
+      `Movie Forum API, where is possible to create a user, login, search for movies,
+      create and search for reviews and comments, and edit then. Done by Guilherme de Araujo Gabriel`,
+    )
+    .setExternalDoc(
+      'Business rules and repository doc.',
+      'https://github.com/guilhermag/lc-movie-review-api/blob/main/markdown/english/business-rules.md',
+    )
     .setVersion('1.0')
+    .addTag('Users')
+    .addTag('Movies')
+    .addTag('Reviews')
+    .addTag('Comments')
     .addBearerAuth(
       {
         type: 'http',

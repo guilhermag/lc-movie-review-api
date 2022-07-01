@@ -17,7 +17,7 @@ O objetivo desse projeto foi criar uma API para um forúm de avaliação de film
 - Marcar ou desmarcar um comentário como repetido.
 - Deletar um comentário.
 
-### Regras de negócio e requisitos do projeto
+### Documentação
 
 Com o intuito de deixar esse documento o mais limpo possível, as regras de negócio e requisitos foram detalhadas nos arquivos abaixo.
 
@@ -86,6 +86,8 @@ JWT_SECRET="your-jwt-secret"
 API_KEY_OMDB="your-api-key"
 ```
 
+Para adquirir uma chave do OMBDB pode ser requisitado pelo [site da api.](https://www.omdbapi.com/apikey.aspx)
+
 Na para raiz existe um arquivo ```.env.example``` ele serve como um exemplo/modelo, é possível criar um novo ```.env```  ou simplesmente renomear o arquivo ```.env.example```, e preenchê-lo com as suas variáveis de ambiente.
 
 O projeto foi configurado para rodar na porta 3333, logo todos os endpoinst estarão locarizados em ```http://localhost:3333/...```.
@@ -102,6 +104,8 @@ $ npm run start:dev
 ```
 
 É possível consultar e fazer alterações no banco a partir do localhost, o prisma possuí o [Prisma studio](https://www.prisma.io/docs/concepts/components/prisma-studio), e a  [documentação](https://www.prisma.io/docs/concepts/components/prisma-studio).
+
+*Dica: O prisma studio pode ser útil para mudar cargos, dessa forma tendo acesso a todas as funcionalidades do app, ou checar dados do banco de dados, como pontuação, comentários...*
 
 ```bash
 # na pasta do projeto digite

@@ -22,7 +22,7 @@ import { JwtGuard } from '../auth/guard';
 import { GetUser } from '../auth/decorator';
 
 @Controller('user')
-@ApiTags('User')
+@ApiTags('Users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -34,6 +34,10 @@ export class UserController {
     type: IndexUserSwagger,
     isArray: false,
   })
+  @ApiResponse({
+    status: 404,
+    description: 'fail',
+  })
   create(@Body() dto: CreateUserDto) {
     return this.userService.create(dto);
   }
@@ -41,6 +45,14 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   @ApiOperation({ summary: 'Sign in with a user' })
+  @ApiResponse({
+    status: 201,
+    description: 'sucess',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'fail',
+  })
   login(@Body() dto: LoginUserDto) {
     return this.userService.login(dto);
   }
@@ -49,6 +61,14 @@ export class UserController {
   @ApiBearerAuth('JWT-auth')
   @Patch('newmod/:id')
   @ApiOperation({ summary: 'Turns a user into a moderator' })
+  @ApiResponse({
+    status: 201,
+    description: 'sucess',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'fail',
+  })
   turnUserIntoMod(
     @GetUser('id') loggedUserId: number,
     @Param('id', ParseIntPipe) userId: number,
