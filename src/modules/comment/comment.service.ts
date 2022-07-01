@@ -199,13 +199,18 @@ export class CommentService {
 
   async deleteById(userId: number, commentId: number) {
     await this.checkIfCommentExist(commentId);
+
+    const authorId = (await this.findById(commentId)).authorId;
+    const loggedUserRole: Role = await this.userService.getUserRole(userId);
+    if (authorId === userId || loggedUserRole === 'MODERATOR') {
+      await this.prisma.comment.delete({
+        where: {
+          id: commentId,
+        },
+      });
+      return { message: `The comment with id ${commentId} was deleted` };
+    }
     await this.checkRoleForMod(userId);
-    await this.prisma.comment.delete({
-      where: {
-        id: commentId,
-      },
-    });
-    return { message: `The comment with id ${commentId} was deleted` };
   }
 
   async commentRepeated(userId: number, commentId: number): Promise<void> {
@@ -235,7 +240,8 @@ export class CommentService {
     replyMessage: string,
   ): Promise<string> {
     const repliedComment = await this.findById(commentId);
-    const authorEmail = (await this.userService.findById(commentId)).email;
+    const authorId = repliedComment.authorId;
+    const authorEmail = (await this.userService.findById(authorId)).email;
     const writerEmail = (await this.userService.findById(userId)).email;
     return `Comment: ${repliedComment.description}, from @${authorEmail}, replied by @${writerEmail} with the message: ${replyMessage}`;
   }
@@ -246,8 +252,8 @@ export class CommentService {
     quoteMessage: string,
   ): Promise<string> {
     const quotedComment = await this.findById(quotedCommentId);
-    const authorEmail = (await this.userService.findById(quotedCommentId))
-      .email;
+    const authorId = quotedComment.authorId;
+    const authorEmail = (await this.userService.findById(authorId)).email;
     const writerEmail = (await this.userService.findById(userId)).email;
     return `Comment: ${quotedComment.description}, from @${authorEmail}, quoted by @${writerEmail} with the message: ${quoteMessage}`;
   }
