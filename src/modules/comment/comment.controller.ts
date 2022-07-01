@@ -25,7 +25,18 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { CommentSwagger } from '../movie/swagger/comments.swagger';
+import {
+  allComments,
+  changeSuccess,
+  comment,
+  commentNotFound,
+  created,
+  databaseError,
+  delError,
+  deleted,
+  movieNotFound,
+  userNotFound,
+} from './swagger/swagger.responses';
 
 @UseGuards(JwtGuard)
 @ApiBearerAuth('JWT-auth')
@@ -36,15 +47,8 @@ export class CommentController {
 
   @Post('movie/id-imdb?')
   @ApiOperation({ summary: 'Creates a comment using the movie imdb id' })
-  @ApiResponse({
-    status: 201,
-    description: 'Comment created',
-    type: CommentSwagger,
-  })
-  @ApiResponse({
-    status: 403,
-    description: 'Movie id not found',
-  })
+  @ApiResponse(created)
+  @ApiResponse(movieNotFound)
   createCommentByMovieId(
     @Query('id') idIMDB: string,
     @GetUser('id') userId: number,
@@ -55,15 +59,8 @@ export class CommentController {
 
   @Post('movie/title?')
   @ApiOperation({ summary: 'Creates a comment using the movie title' })
-  @ApiResponse({
-    status: 201,
-    description: 'Comment created',
-    type: CommentSwagger,
-  })
-  @ApiResponse({
-    status: 403,
-    description: 'Movie title not found',
-  })
+  @ApiResponse(created)
+  @ApiResponse(movieNotFound)
   createCommentByMovieTitle(
     @Query('title') title: string,
     @GetUser('id') userId: number,
@@ -74,64 +71,24 @@ export class CommentController {
 
   @Get('')
   @ApiOperation({ summary: 'Get all the comments' })
-  @ApiResponse({
-    status: 200,
-    description: 'All the comments',
-    type: CommentSwagger,
-    isArray: true,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Database error',
-  })
+  @ApiResponse(allComments)
+  @ApiResponse(databaseError)
   getAllComments() {
     return this.commentService.findAll();
   }
 
-  @Get('logged-user')
-  @ApiOperation({ summary: 'Get all the comments from the logged user' })
-  @ApiResponse({
-    status: 200,
-    description: 'All the comments from the logged user or a empty array',
-    type: CommentSwagger,
-    isArray: true,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Database errror',
-  })
-  getAllCommentsOfLoggedUser(@GetUser('id') userId: number) {
-    return this.commentService.findByUser(userId);
-  }
-
   @Get('user/:id')
   @ApiOperation({ summary: 'Get all the comments from an user in expecific' })
-  @ApiResponse({
-    status: 200,
-    description: 'All the comments from a user or a empty array',
-    type: CommentSwagger,
-    isArray: true,
-  })
-  @ApiResponse({
-    status: 403,
-    description: 'User not found',
-  })
+  @ApiResponse(allComments)
+  @ApiResponse(userNotFound)
   getAllCommentsByUser(@Param('id', ParseIntPipe) userId: number) {
     return this.commentService.findByUser(userId);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a comment in expecific' })
-  @ApiResponse({
-    status: 200,
-    description: 'Get a comment in expecific',
-    type: CommentSwagger,
-    isArray: true,
-  })
-  @ApiResponse({
-    status: 403,
-    description: 'Comment not found',
-  })
+  @ApiResponse(comment)
+  @ApiResponse(commentNotFound)
   getCommentById(@Param('id', ParseIntPipe) commentId: number) {
     return this.commentService.findById(commentId);
   }
@@ -147,14 +104,8 @@ export class CommentController {
 
   @Patch('like/:id')
   @ApiOperation({ summary: 'Logged user likes a comment' })
-  @ApiResponse({
-    status: 201,
-    description: 'sucess',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'fail',
-  })
+  @ApiResponse(changeSuccess)
+  @ApiResponse(commentNotFound)
   likeCommentById(
     @GetUser('id') userEvaluatorId: number,
     @Param('id', ParseIntPipe) commentId: number,
@@ -164,14 +115,8 @@ export class CommentController {
 
   @Patch('dislike/:id')
   @ApiOperation({ summary: 'Logged user dislikes a comment' })
-  @ApiResponse({
-    status: 201,
-    description: 'sucess',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'fail',
-  })
+  @ApiResponse(changeSuccess)
+  @ApiResponse(commentNotFound)
   dislikeCommentById(
     @GetUser('id') userEvaluatorId: number,
     @Param('id', ParseIntPipe) commentId: number,
@@ -180,17 +125,12 @@ export class CommentController {
   }
 
   @Post('quote/:id')
-  @ApiOperation({
-    summary: 'Logged user quotes a comment, and add it to his list of quotes',
-  })
+  @ApiOperation(changeSuccess)
   @ApiResponse({
     status: 201,
     description: 'sucess',
   })
-  @ApiResponse({
-    status: 404,
-    description: 'fail',
-  })
+  @ApiResponse(commentNotFound)
   quoteCommentById(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) commentId: number,
@@ -201,14 +141,8 @@ export class CommentController {
 
   @Post('repeated/:id')
   @ApiOperation({ summary: 'Marks a comment as repeated' })
-  @ApiResponse({
-    status: 201,
-    description: 'sucess',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'fail',
-  })
+  @ApiResponse(changeSuccess)
+  @ApiResponse(commentNotFound)
   commentRepeated(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) commentId: number,
@@ -218,14 +152,8 @@ export class CommentController {
 
   @Post('not/repeated/:id')
   @ApiOperation({ summary: 'Marks a comment as not repeated' })
-  @ApiResponse({
-    status: 201,
-    description: 'sucess',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'fail',
-  })
+  @ApiResponse(changeSuccess)
+  @ApiResponse(commentNotFound)
   commentNotRepeated(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) commentId: number,
@@ -234,18 +162,12 @@ export class CommentController {
   }
 
   @Patch('edit/:id')
-  @ApiOperation({
-    summary:
-      'Logged user can edit own comment or from others if the user is a moderator',
-  })
+  @ApiOperation(comment)
   @ApiResponse({
     status: 201,
     description: 'sucess',
   })
-  @ApiResponse({
-    status: 404,
-    description: 'fail',
-  })
+  @ApiResponse(commentNotFound)
   editCommentById(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) commentId: number,
@@ -256,14 +178,8 @@ export class CommentController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Deletes a comment' })
-  @ApiResponse({
-    status: 201,
-    description: 'sucess',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'fail',
-  })
+  @ApiResponse(deleted)
+  @ApiResponse(delError)
   deleteCommentById(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) commentId: number,

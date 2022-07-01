@@ -20,7 +20,17 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { ReviewSwagger } from '../movie/swagger/review.swagger';
+import {
+  allReviews,
+  created,
+  databaseError,
+  delError,
+  deleted,
+  movieNotFound,
+  review,
+  reviewNotFound,
+  userNotFound,
+} from './swagger/responses.swagger';
 
 @UseGuards(JwtGuard)
 @ApiBearerAuth('JWT-auth')
@@ -31,15 +41,8 @@ export class ReviewController {
 
   @Post('movie/id-imdb?')
   @ApiOperation({ summary: 'Creates a review using the movie imdb id' })
-  @ApiResponse({
-    status: 201,
-    description: 'Review created',
-    type: ReviewSwagger,
-  })
-  @ApiResponse({
-    status: 403,
-    description: 'Movie id not found',
-  })
+  @ApiResponse(created)
+  @ApiResponse(movieNotFound)
   createReviewByMovieId(
     @GetUser('id') userId: number,
     @Query('id') idIMDB: string,
@@ -50,15 +53,8 @@ export class ReviewController {
 
   @Post('movie/title?')
   @ApiOperation({ summary: 'Creates a review using the movie title' })
-  @ApiResponse({
-    status: 201,
-    description: 'Review created',
-    type: ReviewSwagger,
-  })
-  @ApiResponse({
-    status: 403,
-    description: 'Movie title not found',
-  })
+  @ApiResponse(created)
+  @ApiResponse(movieNotFound)
   createReviewByMovieTitle(
     @GetUser('id') userId: number,
     @Query('title') title: string,
@@ -69,65 +65,26 @@ export class ReviewController {
 
   @Get('')
   @ApiOperation({ summary: 'Get all the reviews' })
-  @ApiResponse({
-    status: 200,
-    description: 'All the reviews',
-    type: ReviewSwagger,
-    isArray: true,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Database error',
-  })
+  @ApiResponse(allReviews)
+  @ApiResponse(databaseError)
   getAllReviews() {
     return this.reviewService.findAll();
-  }
-
-  @Get('logged-user')
-  @ApiOperation({ summary: 'Get all the reviews from the logged user' })
-  @ApiResponse({
-    status: 200,
-    description: 'All the reviews from the logged user or a empty array',
-    type: ReviewSwagger,
-    isArray: true,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Database error',
-  })
-  getAllReviewsOfLoggedUser(@GetUser('id') userId: number) {
-    return this.reviewService.findByUser(userId);
   }
 
   @Get('user/:id')
   @ApiOperation({
     summary: 'Get all the reviews from an user in expecific or a empty array',
   })
-  @ApiResponse({
-    status: 200,
-    description: 'All the reviews of a user in expecific',
-    type: ReviewSwagger,
-    isArray: true,
-  })
-  @ApiResponse({
-    status: 403,
-    description: 'User not found',
-  })
+  @ApiResponse(allReviews)
+  @ApiResponse(userNotFound)
   getAllReviewsByUser(@Param('id', ParseIntPipe) userId: number) {
     return this.reviewService.findByUser(userId);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a review in expecific' })
-  @ApiResponse({
-    status: 200,
-    description: 'The selected review',
-    type: ReviewSwagger,
-  })
-  @ApiResponse({
-    status: 403,
-    description: 'Review not found',
-  })
+  @ApiResponse(review)
+  @ApiResponse(reviewNotFound)
   getReviewById(@Param('id', ParseIntPipe) reviewId: number) {
     return this.reviewService.findById(reviewId);
   }
@@ -137,15 +94,8 @@ export class ReviewController {
     summary:
       'Logged user can edit own review or from others if the user is a moderator',
   })
-  @ApiResponse({
-    status: 200,
-    description: 'The edited review',
-    type: ReviewSwagger,
-  })
-  @ApiResponse({
-    status: 403,
-    description: 'Review not found',
-  })
+  @ApiResponse(review)
+  @ApiResponse(reviewNotFound)
   editReviewById(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) reviewId: number,
@@ -156,15 +106,8 @@ export class ReviewController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Deletes a review' })
-  @ApiResponse({
-    status: 200,
-    description: 'Review deleted',
-  })
-  @ApiResponse({
-    status: 403,
-    description:
-      'Review not found, or a user it is not the author or it is not a moderator',
-  })
+  @ApiResponse(deleted)
+  @ApiResponse(delError)
   deleteCommentById(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) reviewId: number,

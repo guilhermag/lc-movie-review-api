@@ -10,6 +10,7 @@ export class CreateUserDto {
     default: 'userEmail@email.com',
   })
   email: string;
+
   @ApiPropertyOptional({
     example: 'Guilherme Gabriel',
     description: 'The name of the user that is beeing created',
