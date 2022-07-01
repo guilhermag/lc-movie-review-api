@@ -27,3 +27,5 @@ Now just click on the ```Authorize``` button in the top right side of the page.
 Paste the access token and click on ```Authorize```.
 
 ![authorize value](../imgs/swagger-authorizarions.png)
+
+[Link to the main document.](../../README.md)

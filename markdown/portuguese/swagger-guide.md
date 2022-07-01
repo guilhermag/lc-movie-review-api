@@ -28,6 +28,4 @@ Cole o token no campo value e aperte o botão ```Authorize```.
 
 ![authorize value](../imgs/swagger-authorizarions.png)
 
-[Link to the main document.](../../README.md)
-
 [Link para o documento principal.](./README.md)
