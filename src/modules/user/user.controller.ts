@@ -20,6 +20,7 @@ import {
 import { IndexUserSwagger } from './swagger/index-user.swagger';
 import { JwtGuard } from '../auth/guard';
 import { GetUser } from '../auth/decorator';
+import { LoginUserSwagger } from './swagger/login-user.swagger';
 
 @Controller('user')
 @ApiTags('Users')
@@ -35,8 +36,8 @@ export class UserController {
     isArray: false,
   })
   @ApiResponse({
-    status: 404,
-    description: 'fail',
+    status: 400,
+    description: 'Error when trying to pass a invalid email or password.',
   })
   create(@Body() dto: CreateUserDto) {
     return this.userService.create(dto);
@@ -46,12 +47,19 @@ export class UserController {
   @Post('login')
   @ApiOperation({ summary: 'Sign in with a user' })
   @ApiResponse({
-    status: 201,
-    description: 'sucess',
+    status: 200,
+    description:
+      'The user credentials are authenticated and validated, returning the access token.',
+    type: LoginUserSwagger,
   })
   @ApiResponse({
-    status: 404,
-    description: 'fail',
+    status: 401,
+    description: 'The user credentials are invalids',
+  })
+  @ApiResponse({
+    status: 403,
+    description:
+      'Number of login attempts was exceeded, the app was blocked, wait for 2 MINUTES',
   })
   login(@Body() dto: LoginUserDto) {
     return this.userService.login(dto);
@@ -62,12 +70,12 @@ export class UserController {
   @Patch('newmod/:id')
   @ApiOperation({ summary: 'Turns a user into a moderator' })
   @ApiResponse({
-    status: 201,
-    description: 'sucess',
+    status: 200,
+    description: 'The user chosen is a moderator now',
   })
   @ApiResponse({
-    status: 404,
-    description: 'fail',
+    status: 403,
+    description: 'Only moderators can turn other users into moderators',
   })
   turnUserIntoMod(
     @GetUser('id') loggedUserId: number,

@@ -13,6 +13,9 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { CreateMovieDto } from './dto';
+import { CommentSwagger } from './swagger/comments.swagger';
+import { ReviewSwagger } from './swagger/review.swagger';
 
 @UseGuards(JwtGuard)
 @ApiBearerAuth('JWT-auth')
@@ -24,12 +27,13 @@ export class MovieController {
   @Get('search/id/:id')
   @ApiOperation({ summary: 'Search for a movie in OMDb API by the imdb id' })
   @ApiResponse({
-    status: 201,
-    description: 'sucess',
+    status: 200,
+    description: 'Movie found',
+    type: CreateMovieDto,
   })
   @ApiResponse({
-    status: 404,
-    description: 'fail',
+    status: 403,
+    description: 'Movie not found',
   })
   getMovieApiById(@Param('id') movieImdbId: string) {
     return this.movieService.findMovieApiById(movieImdbId);
@@ -38,12 +42,13 @@ export class MovieController {
   @Get('search/title/:title')
   @ApiOperation({ summary: 'Search for a movie in OMDb API by the title' })
   @ApiResponse({
-    status: 201,
-    description: 'sucess',
+    status: 200,
+    description: 'Movie found',
+    type: CreateMovieDto,
   })
   @ApiResponse({
-    status: 404,
-    description: 'fail',
+    status: 403,
+    description: 'Movie not found',
   })
   getMovieApiByTitle(@Param('title') movieTitle: string) {
     return this.movieService.findMovieApiByTitle(movieTitle);
@@ -52,12 +57,14 @@ export class MovieController {
   @Get('')
   @ApiOperation({ summary: 'Get all the movies with comments or reviews' })
   @ApiResponse({
-    status: 201,
+    status: 200,
     description: 'sucess',
+    type: CreateMovieDto,
+    isArray: true,
   })
   @ApiResponse({
     status: 404,
-    description: 'fail',
+    description: 'database error',
   })
   getAllMoviesInBase() {
     return this.movieService.findAll();
@@ -66,12 +73,14 @@ export class MovieController {
   @Get('comments/:id')
   @ApiOperation({ summary: 'Get all the comments of a movie' })
   @ApiResponse({
-    status: 201,
-    description: 'sucess',
+    status: 200,
+    description: 'All the comments',
+    type: CommentSwagger,
+    isArray: true,
   })
   @ApiResponse({
-    status: 404,
-    description: 'fail',
+    status: 403,
+    description: 'Movie not found',
   })
   getAllCommentsByMovie(@Param('id', ParseIntPipe) movieId: number) {
     return this.movieService.findAllComments(movieId);
@@ -80,12 +89,14 @@ export class MovieController {
   @Get('reviews/:id')
   @ApiOperation({ summary: 'Get all the reviews of a movie' })
   @ApiResponse({
-    status: 201,
-    description: 'sucess',
+    status: 200,
+    description: 'All the reviews',
+    type: ReviewSwagger,
+    isArray: true,
   })
   @ApiResponse({
-    status: 404,
-    description: 'fail',
+    status: 403,
+    description: 'Movie not found',
   })
   getAllReviewsByMovie(@Param('id', ParseIntPipe) movieId: number) {
     return this.movieService.findAllReviews(movieId);
@@ -94,12 +105,13 @@ export class MovieController {
   @Get(':id')
   @ApiOperation({ summary: 'Get a movie in expecific' })
   @ApiResponse({
-    status: 201,
-    description: 'sucess',
+    status: 200,
+    description: 'Movie found',
+    type: CreateMovieDto,
   })
   @ApiResponse({
-    status: 404,
-    description: 'fail',
+    status: 403,
+    description: 'Movie not found',
   })
   getMovieById(@Param('id', ParseIntPipe) movieId: number) {
     return this.movieService.findById(movieId);

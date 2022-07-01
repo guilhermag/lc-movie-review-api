@@ -25,6 +25,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { CommentSwagger } from '../movie/swagger/comments.swagger';
 
 @UseGuards(JwtGuard)
 @ApiBearerAuth('JWT-auth')
@@ -37,11 +38,12 @@ export class CommentController {
   @ApiOperation({ summary: 'Creates a comment using the movie imdb id' })
   @ApiResponse({
     status: 201,
-    description: 'sucess',
+    description: 'Comment created',
+    type: CommentSwagger,
   })
   @ApiResponse({
-    status: 404,
-    description: 'fail',
+    status: 403,
+    description: 'Movie id not found',
   })
   createCommentByMovieId(
     @Query('id') idIMDB: string,
@@ -55,11 +57,12 @@ export class CommentController {
   @ApiOperation({ summary: 'Creates a comment using the movie title' })
   @ApiResponse({
     status: 201,
-    description: 'sucess',
+    description: 'Comment created',
+    type: CommentSwagger,
   })
   @ApiResponse({
-    status: 404,
-    description: 'fail',
+    status: 403,
+    description: 'Movie title not found',
   })
   createCommentByMovieTitle(
     @Query('title') title: string,
@@ -72,12 +75,14 @@ export class CommentController {
   @Get('')
   @ApiOperation({ summary: 'Get all the comments' })
   @ApiResponse({
-    status: 201,
-    description: 'sucess',
+    status: 200,
+    description: 'All the comments',
+    type: CommentSwagger,
+    isArray: true,
   })
   @ApiResponse({
     status: 404,
-    description: 'fail',
+    description: 'Database error',
   })
   getAllComments() {
     return this.commentService.findAll();
@@ -86,12 +91,14 @@ export class CommentController {
   @Get('logged-user')
   @ApiOperation({ summary: 'Get all the comments from the logged user' })
   @ApiResponse({
-    status: 201,
-    description: 'sucess',
+    status: 200,
+    description: 'All the comments from the logged user or a empty array',
+    type: CommentSwagger,
+    isArray: true,
   })
   @ApiResponse({
     status: 404,
-    description: 'fail',
+    description: 'Database errror',
   })
   getAllCommentsOfLoggedUser(@GetUser('id') userId: number) {
     return this.commentService.findByUser(userId);
@@ -100,12 +107,14 @@ export class CommentController {
   @Get('user/:id')
   @ApiOperation({ summary: 'Get all the comments from an user in expecific' })
   @ApiResponse({
-    status: 201,
-    description: 'sucess',
+    status: 200,
+    description: 'All the comments from a user or a empty array',
+    type: CommentSwagger,
+    isArray: true,
   })
   @ApiResponse({
-    status: 404,
-    description: 'fail',
+    status: 403,
+    description: 'User not found',
   })
   getAllCommentsByUser(@Param('id', ParseIntPipe) userId: number) {
     return this.commentService.findByUser(userId);
@@ -114,27 +123,20 @@ export class CommentController {
   @Get(':id')
   @ApiOperation({ summary: 'Get a comment in expecific' })
   @ApiResponse({
-    status: 201,
-    description: 'sucess',
+    status: 200,
+    description: 'Get a comment in expecific',
+    type: CommentSwagger,
+    isArray: true,
   })
   @ApiResponse({
-    status: 404,
-    description: 'fail',
+    status: 403,
+    description: 'Comment not found',
   })
   getCommentById(@Param('id', ParseIntPipe) commentId: number) {
     return this.commentService.findById(commentId);
   }
 
   @Post('reply/:id')
-  @ApiOperation({ summary: 'Logged user replies a comment' })
-  @ApiResponse({
-    status: 201,
-    description: 'sucess',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'fail',
-  })
   ReplyCommentById(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) commentId: number,
